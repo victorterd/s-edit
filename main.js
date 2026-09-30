@@ -133,14 +133,27 @@
 
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-in");
-        io.unobserve(entry.target);
-      }
+      if (entry.isIntersecting) reveal(entry.target);
     });
-  }, { rootMargin: "0px 0px -12% 0px" });
+  }, { rootMargin: "0px 0px -8% 0px" });
+
+  function reveal(el) {
+    el.classList.add("is-in");
+    io.unobserve(el);
+  }
 
   items.forEach(function (el) { io.observe(el); });
+
+  // Elements at the very end of the page may never clear the margin above,
+  // because the page can't scroll any further: reveal them at the bottom.
+  window.addEventListener("scroll", function () {
+    var doc = document.documentElement;
+    if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
+      items.forEach(function (el) {
+        if (!el.classList.contains("is-in") && el.getBoundingClientRect().top < window.innerHeight) reveal(el);
+      });
+    }
+  }, { passive: true });
 })();
 
 // Mobile menu
