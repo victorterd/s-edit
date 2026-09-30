@@ -1,18 +1,38 @@
-// Background video: fade in once it's actually playing.
+// Background video. Mobile browsers can block autoplay (iOS Low Power Mode,
+// Android Data Saver), so show the first frame as soon as it's decoded and
+// retry playback on the first touch or when the tab becomes visible again.
 (function () {
   var video = document.querySelector(".bg__video");
   var bg = video.parentElement;
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute("muted", "");
 
   function show() {
     bg.classList.add("is-playing");
   }
 
-  if (!video.paused && video.readyState > 2) show();
+  function play() {
+    var p = video.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+
+  if (video.readyState >= 2) show();
+  video.addEventListener("loadeddata", show, { once: true });
   video.addEventListener("playing", show, { once: true });
 
-  // Some browsers ignore the autoplay attribute until play() is called.
-  var p = video.play();
-  if (p && p.catch) p.catch(function () {});
+  play();
+
+  ["touchstart", "pointerdown", "scroll"].forEach(function (type) {
+    window.addEventListener(type, function () {
+      if (video.paused) play();
+    }, { once: true, passive: true });
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && video.paused) play();
+  });
 })();
 
 // Mobile menu
