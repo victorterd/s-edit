@@ -1200,9 +1200,8 @@ a { color: inherit; text-decoration: none; }
 .footer__links ul:last-child { justify-items: end; }
 
 /* The logo, full width and cropped by the bottom edge, rises as you arrive.
-   Two masked layers blend with the video behind: soft-light carries the
-   footage's colour and detail into the letters, a cream screen keeps them
-   light and legible. */
+   It's a white mask in difference mode, so the letters show the video
+   behind them as a negative. */
 .footer__logo {
   position: relative;
   margin-top: 80px;
@@ -1218,11 +1217,11 @@ a { color: inherit; text-decoration: none; }
   aspect-ratio: 672 / 351;
   -webkit-mask: url("assets/logo.svg") center / 100% 100% no-repeat;
   mask: url("assets/logo.svg") center / 100% 100% no-repeat;
+  background: #fff;
+  mix-blend-mode: difference;
   transform: translateY(calc((1 - var(--f, 1)) * 35%));
 }
 
-.footer__ink--light { background: #fff; mix-blend-mode: soft-light; }
-.footer__ink--cream { background: #f1e7da; opacity: 0.55; mix-blend-mode: screen; }
 
 /* ---------- Mobile ---------- */
 
