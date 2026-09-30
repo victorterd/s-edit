@@ -1,12 +1,19 @@
 // Background video: muted, looping YouTube embed with no player UI.
 // It fades in only once it's actually playing, so YouTube's loading overlay never shows.
 (function () {
-  var host = document.getElementById("bg-video");
-  var bg = host.parentElement;
-  var videoId = host.dataset.videoId;
+  var wrap = document.querySelector(".bg__video");
+  var bg = wrap.parentElement;
+  var videoId = wrap.dataset.videoId;
+
+  function hideCaptions(player) {
+    try {
+      player.unloadModule("captions");
+      player.unloadModule("cc");
+    } catch (err) {}
+  }
 
   window.onYouTubeIframeAPIReady = function () {
-    new YT.Player(host, {
+    new YT.Player("bg-player", {
       videoId: videoId,
       playerVars: {
         autoplay: 1,
@@ -20,14 +27,19 @@
         fs: 0,
         iv_load_policy: 3,
         modestbranding: 1,
+        cc_load_policy: 0,
       },
       events: {
         onReady: function (e) {
           e.target.mute();
+          hideCaptions(e.target);
           e.target.playVideo();
         },
         onStateChange: function (e) {
-          if (e.data === YT.PlayerState.PLAYING) bg.classList.add("is-playing");
+          if (e.data === YT.PlayerState.PLAYING) {
+            hideCaptions(e.target);
+            bg.classList.add("is-playing");
+          }
           if (e.data === YT.PlayerState.ENDED) e.target.seekTo(0);
         },
       },
