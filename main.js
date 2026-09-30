@@ -372,6 +372,82 @@ function whileVisible(el, onEnter, onLeave) {
   }, function () { running = false; });
 })();
 
+// Testimonials: each quote lights up word by word, holds, then hands over
+// to the next; the tab bars show how long is left. Tabs switch directly.
+(function () {
+  var root = document.querySelector(".tst");
+  if (!root) return;
+
+  var items = [].slice.call(root.querySelectorAll(".tst__item"));
+  var tabs = [].slice.call(root.querySelectorAll(".tst__tab"));
+  var durations = [];
+
+  items.forEach(function (item, i) {
+    var q = item.querySelector(".tst__quote");
+    var words = q.textContent.trim().split(/\s+/);
+    q.innerHTML = words.map(function (w, n) {
+      return '<span class="w" style="--i: ' + n + '">' + w + "</span>";
+    }).join(" ");
+    item.style.setProperty("--n", words.length);
+    // time to "read" the words, then a pause to take it in
+    durations[i] = words.length * 70 + 5200;
+  });
+
+  var current = 0;
+  var elapsed = 0;
+  var visible = false;
+  var last = 0;
+
+  function show(i) {
+    items[current].classList.remove("is-active");
+    items[current].hidden = true;
+    tabs[current].classList.remove("is-active");
+    tabs[current].setAttribute("aria-selected", "false");
+    tabs[current].style.setProperty("--progress", 0);
+
+    current = i;
+    elapsed = 0;
+    items[i].hidden = false;
+    void items[i].offsetWidth; // restart the word sequence
+    items[i].classList.add("is-active");
+    tabs[i].classList.add("is-active");
+    tabs[i].setAttribute("aria-selected", "true");
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { if (i !== current) show(i); });
+  });
+
+  function tick(now) {
+    if (!visible) return;
+    var dt = last ? now - last : 0;
+    last = now;
+    elapsed += dt;
+    var p = Math.min(elapsed / durations[current], 1);
+    tabs[current].style.setProperty("--progress", p.toFixed(4));
+    if (p >= 1) show((current + 1) % items.length);
+    requestAnimationFrame(tick);
+  }
+
+  if (reducedMotion) return;
+
+  var started = false;
+
+  whileVisible(root, function () {
+    if (visible) return;
+    visible = true;
+    last = 0;
+    // Play the first quote's word sequence when it's actually seen.
+    if (!started) {
+      started = true;
+      items[0].classList.remove("is-active");
+      void items[0].offsetWidth;
+      items[0].classList.add("is-active");
+    }
+    requestAnimationFrame(tick);
+  }, function () { visible = false; });
+})();
+
 // Mobile menu
 (function () {
   var burger = document.querySelector(".burger");
