@@ -288,51 +288,18 @@ function whileVisible(el, onEnter, onLeave) {
   render();
 })();
 
-// VFX before/after: drag (or use arrow keys) to move the split. On first view
-// the split sweeps in from the right so the change is visible straight away.
+// On phones the reels stack vertically, so reveal each one as it arrives.
 (function () {
-  var root = document.querySelector(".compare");
-  if (!root) return;
-  var range = root.querySelector(".compare__range");
-  var shown = false;
-
-  function set(v) { root.style.setProperty("--x", v + "%"); }
-
-  range.addEventListener("input", function () { set(range.value); });
-  range.addEventListener("pointerdown", function () { root.classList.add("is-dragging"); });
-  window.addEventListener("pointerup", function () { root.classList.remove("is-dragging"); });
-
-  whileVisible(root, function () {
-    if (shown) return;
-    shown = true;
-    if (reducedMotion) return set(50);
-    var start = performance.now();
-    (function sweep(now) {
-      var t = Math.min((now - start) / 1600, 1);
-      var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-      set((100 - 50 * e).toFixed(2));
-      range.value = 100 - 50 * e;
-      if (t < 1) requestAnimationFrame(sweep);
-    })(start);
-  }, function () {});
-})();
-
-// SFX waveform: deterministic bars, played back only while on screen.
-(function () {
-  var wave = document.querySelector(".wave");
-  if (!wave) return;
-  // Roughly one bar every 8px keeps bars legible at any width.
-  var count = Math.min(Math.max(Math.round(wave.clientWidth / 8), 40), 120);
-  var html = "";
-  for (var i = 0; i < count; i++) {
-    var h = 0.18 + 0.5 * Math.abs(Math.sin(i * 0.37) * Math.cos(i * 0.11)) +
-      0.32 * Math.abs(Math.sin(i * 1.7 + 1)) * (i % 7 === 0 ? 1 : 0.55);
-    html += '<span style="--h: ' + Math.min(h, 1).toFixed(3) + "; --i: " + i + '"></span>';
-  }
-  wave.querySelectorAll(".wave__bars").forEach(function (el) { el.innerHTML = html; });
-
-  whileVisible(wave, function () { wave.classList.add("is-playing"); },
-    function () { wave.classList.remove("is-playing"); });
+  if (!window.matchMedia("(max-width: 767px)").matches || !("IntersectionObserver" in window)) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add("is-in");
+        io.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".reel").forEach(function (el) { io.observe(el); });
 })();
 
 // Mobile menu

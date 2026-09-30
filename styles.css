@@ -554,9 +554,7 @@ a { color: inherit; text-decoration: none; }
 /* ----- Medium-form: an edit timeline driving a viewer ----- */
 
 /* Frame + controls fit in one screen, centred under the heading. */
-.timeline,
-.compare,
-.wave {
+.timeline {
   max-width: calc((100svh - 280px) * 16 / 9);
   margin-inline: auto;
 }
@@ -664,146 +662,47 @@ a { color: inherit; text-decoration: none; }
 
 .js .timeline.is-in { opacity: 1; transform: none; }
 
-/* ----- VFX & SFX: before/after split and a scrubbed waveform ----- */
+/* ----- VFX & SFX: a simple grid of frames, each wiping open on view ----- */
 
-.compare {
-  position: relative;
+.fx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.fx {
+  margin: 0;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
   overflow: hidden;
   background: #1c1b1a;
-  user-select: none;
 }
 
-.compare img {
-  position: absolute;
-  inset: 0;
+.fx img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
 }
 
-/* The ungraded plate: flat, washed-out, like a log file straight off camera. */
-.compare__before {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(0 calc(100% - var(--x)) 0 0);
+@media (hover: hover) {
+  .fx:hover img { transform: scale(1.05); }
 }
 
-.compare__before img { filter: saturate(0.25) contrast(0.68) brightness(1.18); }
-
-.compare__label {
-  position: absolute;
-  top: 18px;
-  transition: opacity 0.3s ease;
+.js .fx {
+  clip-path: inset(100% 0 0 0 round 10px);
+  transition: clip-path 1.3s var(--ease) calc(var(--i) % 2 * 0.12s);
 }
 
-.compare__label--before { left: 20px; }
-.compare__label--after { right: 20px; }
+.js .fx img { transform: scale(1.2); }
 
-.compare__handle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--x);
-  width: 1px;
-  background: var(--fg);
-  pointer-events: none;
+.js .fx.is-in { clip-path: inset(0 0 0 0 round 10px); }
+.js .fx.is-in img { transform: scale(1); }
+
+@media (hover: hover) {
+  .js .fx.is-in:hover img { transform: scale(1.05); }
 }
-
-.compare__handle::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--fg);
-  border-radius: 50%;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='10' viewBox='0 0 22 10'%3E%3Cpath d='M5 0 0 5l5 5M17 0l5 5-5 5' fill='none' stroke='white'/%3E%3C/svg%3E") center / 22px 10px no-repeat,
-    rgba(12, 12, 12, 0.35);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transform: translate(-50%, -50%);
-  transition: transform 0.4s var(--ease-out);
-}
-
-.compare:hover .compare__handle::after,
-.compare.is-dragging .compare__handle::after { transform: translate(-50%, -50%) scale(1.15); }
-
-.compare__range {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  opacity: 0;
-  cursor: ew-resize;
-  touch-action: pan-y;
-}
-
-.compare:has(.compare__range:focus-visible) .compare__handle::after {
-  outline: 1px solid var(--fg);
-  outline-offset: 4px;
-}
-
-.js .compare {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 1s ease, transform 1.3s var(--ease-out);
-}
-
-.js .compare.is-in { opacity: 1; transform: none; }
-
-.wave {
-  position: relative;
-  height: 72px;
-  margin-top: 28px;
-  container-type: inline-size;
-}
-
-.wave__bars {
-  position: absolute;
-  inset: 0;
-  width: 100cqw;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.wave__bars span {
-  flex: 1;
-  height: calc(var(--h) * 100%);
-  min-height: 2px;
-  border-radius: 1px;
-  background: rgba(255, 255, 255, 0.22);
-}
-
-/* Played portion: the same bars in full white, uncovered by a moving edge. */
-.wave__played {
-  position: absolute;
-  inset: 0;
-  width: 0;
-  overflow: hidden;
-  border-right: 1px solid var(--fg);
-}
-
-.wave__played .wave__bars span { background: var(--fg); }
-
-.wave.is-playing .wave__played { animation: wave-play 9s linear infinite; }
-
-@keyframes wave-play {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.js .wave__bars span {
-  transform: scaleY(0.05);
-  transition: transform 0.9s var(--ease-out) calc(var(--i) * 6ms);
-}
-
-.js .wave.is-in .wave__bars span { transform: none; }
 
 /* ---------- Mobile ---------- */
 
@@ -840,21 +739,38 @@ a { color: inherit; text-decoration: none; }
 
   .cat__desc { margin: 16px 0 0; }
 
-  /* The rail becomes a native swipe instead of scroll-linked drift. */
-  .reels {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+  /* The rail becomes a staggered two-column grid you scroll through vertically. */
+  .reels { margin: 0; }
+
+  .reels__track {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: auto;
+    padding: 0 0 40px;
+    transform: none;
   }
 
-  .reels::-webkit-scrollbar { display: none; }
+  .reel { width: auto; }
+  .reel:nth-child(even) { margin-top: 0; top: 40px; }
 
-  .reels__track { transform: none; gap: 12px; padding-bottom: 32px; }
-  .reel { width: 62vw; scroll-snap-align: center; }
-  .reel:nth-child(even) { margin-top: 32px; }
+  /* Each frame reveals on its own as it scrolls into view. */
+  .js .reels.is-in .reel:not(.is-in) { opacity: 0; transform: translateY(60px); }
+
+  .js .reel {
+    transition:
+      opacity 0.9s ease calc((var(--i) % 2) * 0.1s),
+      transform 1.2s var(--ease-out) calc((var(--i) % 2) * 0.1s);
+  }
+
+  .js .reel.is-in { opacity: 1; transform: none; }
+
+  .reel__time { top: 10px; right: 10px; }
+  .reel__bar { left: 10px; right: 10px; bottom: 10px; }
+
+  .fx-grid { grid-template-columns: 1fr; gap: 12px; }
 
   .timeline__track { height: 48px; }
-  .wave { height: 52px; }
 
   /* ----- Hamburger: two lines that cross into an X ----- */
 
@@ -982,8 +898,6 @@ a { color: inherit; text-decoration: none; }
   }
 
   .js .about__sig path { clip-path: none; }
-
-  .wave.is-playing .wave__played { animation: none; width: 40%; }
 
   .preloader__logo path {
     animation: none;
