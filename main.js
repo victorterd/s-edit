@@ -129,14 +129,18 @@
     header.classList.toggle("is-dark", ink);
 
     if (track) {
+      var r = reels.getBoundingClientRect();
+      var max = Math.max(track.scrollWidth - reels.clientWidth, 0);
+      var t;
       if (desktop.matches) {
-        var r = reels.getBoundingClientRect();
-        var t = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
-        var max = Math.max(track.scrollWidth - reels.clientWidth, 0);
-        track.style.setProperty("--drift", (t * max).toFixed(1));
+        // Gentle drift while the rail passes through the viewport.
+        t = (vh - r.top) / (vh + r.height);
       } else {
-        track.style.removeProperty("--drift");
+        // Pinned: the rail travels its full width while the section is held.
+        t = -r.top / Math.max(r.height - vh, 1);
       }
+      t = Math.min(Math.max(t, 0), 1);
+      track.style.setProperty("--drift", (t * max).toFixed(1));
     }
     ticking = false;
   }
@@ -147,8 +151,21 @@
       requestAnimationFrame(update);
     }
   }, { passive: true });
-  window.addEventListener("resize", update);
-  update();
+  // On phones the section is as tall as the sideways distance plus one screen.
+  function sizePin() {
+    if (!track) return;
+    if (desktop.matches) {
+      reels.style.removeProperty("--pin-h");
+    } else {
+      var travel = Math.max(track.scrollWidth - reels.clientWidth, 0);
+      reels.style.setProperty("--pin-h", travel + window.innerHeight + "px");
+    }
+    update();
+  }
+
+  window.addEventListener("resize", sizePin);
+  window.addEventListener("load", sizePin);
+  sizePin();
 })();
 
 // Scroll reveals: add .is-in once an element is well into view.
@@ -286,20 +303,6 @@ function whileVisible(el, onEnter, onLeave) {
   }, function () { visible = false; });
 
   render();
-})();
-
-// On phones the reels stack vertically, so reveal each one as it arrives.
-(function () {
-  if (!window.matchMedia("(max-width: 767px)").matches || !("IntersectionObserver" in window)) return;
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) {
-      if (e.isIntersecting) {
-        e.target.classList.add("is-in");
-        io.unobserve(e.target);
-      }
-    });
-  }, { rootMargin: "0px 0px -8% 0px" });
-  document.querySelectorAll(".reel").forEach(function (el) { io.observe(el); });
 })();
 
 // Mobile menu
