@@ -1,6 +1,9 @@
 // Preloader: the logo draws itself while the page and background video load,
 // then slides into the hero logo's exact spot as the curtain lifts.
 (function () {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  window.scrollTo(0, 0);
+
   var root = document.documentElement;
   var pre = document.querySelector(".preloader");
   var logo = pre.querySelector(".preloader__logo");
@@ -97,6 +100,47 @@
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden && video.paused) play();
   });
+})();
+
+// Hero recedes as the about section slides over it.
+(function () {
+  var hero = document.querySelector(".hero");
+  var ticking = false;
+
+  function update() {
+    var p = Math.min(Math.max(window.scrollY / window.innerHeight, 0), 1);
+    hero.style.setProperty("--p", p.toFixed(4));
+    ticking = false;
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, { passive: true });
+  update();
+})();
+
+// Scroll reveals: add .is-in once an element is well into view.
+(function () {
+  var items = document.querySelectorAll("[data-reveal]");
+
+  if (!("IntersectionObserver" in window)) {
+    items.forEach(function (el) { el.classList.add("is-in"); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-in");
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -12% 0px" });
+
+  items.forEach(function (el) { io.observe(el); });
 })();
 
 // Mobile menu
