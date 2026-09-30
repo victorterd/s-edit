@@ -43,14 +43,20 @@
   var burger = document.querySelector(".burger");
   var menu = document.getElementById("menu");
 
+  function isOpen() {
+    return document.body.classList.contains("menu-open");
+  }
+
   function setOpen(open) {
+    document.body.classList.toggle("menu-open", open);
     burger.setAttribute("aria-expanded", String(open));
     burger.setAttribute("aria-label", open ? "Închide meniul" : "Deschide meniul");
-    menu.hidden = !open;
+    menu.setAttribute("aria-hidden", String(!open));
+    menu.inert = !open;
   }
 
   burger.addEventListener("click", function () {
-    setOpen(menu.hidden);
+    setOpen(!isOpen());
   });
 
   menu.addEventListener("click", function (e) {
@@ -58,6 +64,6 @@
   });
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") setOpen(false);
+    if (e.key === "Escape" && isOpen()) setOpen(false);
   });
 })();

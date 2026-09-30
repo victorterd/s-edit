@@ -6,6 +6,7 @@
   --pad-x: calc(147 / 1440 * 100vw);
   --nav-gap: 20px;
   --logo-w: calc(672 / 1440 * 100vw);
+  --ease: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 *,
@@ -142,10 +143,10 @@ a { color: inherit; text-decoration: none; }
 
   .hero__logo img { width: 100%; }
 
+  /* ----- Hamburger: two lines that cross into an X ----- */
+
   .burger {
-    display: grid;
-    align-content: center;
-    gap: 5px;
+    display: block;
     width: 28px;
     height: 20px;
     padding: 0;
@@ -154,17 +155,37 @@ a { color: inherit; text-decoration: none; }
     cursor: pointer;
     position: relative;
     z-index: 3;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .burger span {
-    display: block;
+    position: absolute;
+    left: 0;
+    width: 100%;
     height: 2px;
     background: var(--fg);
-    transition: transform 0.3s ease;
+    transition:
+      top 0.3s var(--ease) 0.3s,
+      width 0.3s var(--ease) 0.3s,
+      transform 0.3s var(--ease);
   }
 
-  .burger[aria-expanded="true"] span:first-child { transform: translateY(3.5px) rotate(45deg); }
-  .burger[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  .burger span:first-child { top: 5px; }
+  .burger span:last-child { top: 13px; width: 65%; left: auto; right: 0; }
+
+  .menu-open .burger span {
+    top: 9px;
+    width: 100%;
+    transition:
+      top 0.3s var(--ease),
+      width 0.3s var(--ease),
+      transform 0.3s var(--ease) 0.3s;
+  }
+
+  .menu-open .burger span:first-child { transform: rotate(45deg); }
+  .menu-open .burger span:last-child { transform: rotate(-45deg); }
+
+  /* ----- Menu panel: wipes down from the top ----- */
 
   .menu {
     position: fixed;
@@ -172,22 +193,80 @@ a { color: inherit; text-decoration: none; }
     z-index: 2;
     display: grid;
     place-items: center;
-    background: rgba(12, 12, 12, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(12, 12, 12, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition:
+      clip-path 0.7s var(--ease) 0.25s,
+      visibility 0s linear 0.95s;
   }
 
-  .menu[hidden] { display: none; }
+  .menu-open .menu {
+    clip-path: inset(0 0 0 0);
+    visibility: visible;
+    transition:
+      clip-path 0.7s var(--ease),
+      visibility 0s;
+  }
+
+  /* ----- Menu links: each line rises out of a mask, staggered ----- */
 
   .menu__links {
     display: grid;
-    gap: 16px;
+    gap: 12px;
     text-align: center;
     font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
     font-weight: 400;
-    font-size: 40px;
-    line-height: 1;
+    font-size: 44px;
+    line-height: 1.05;
+  }
+
+  .menu__links a {
+    display: block;
+    overflow: hidden;
+    padding: 0 4px 2px;
+  }
+
+  .menu__links span {
+    display: block;
+    transform: translateY(110%) rotate(4deg);
+    transform-origin: left bottom;
+    transition: transform 0.35s var(--ease) calc((3 - var(--i)) * 0.04s);
+  }
+
+  .menu-open .menu__links span {
+    transform: none;
+    transition: transform 0.8s var(--ease) calc(0.3s + var(--i) * 0.08s);
+  }
+
+  .menu__links a:hover { opacity: 1; }
+  .menu__links a:hover span,
+  .menu__links a:focus-visible span { font-style: italic; }
+
+  /* ----- Page content steps back while the menu is open ----- */
+
+  .hero__logo,
+  .hero__bottom {
+    transition: opacity 0.5s var(--ease), transform 0.7s var(--ease), filter 0.5s var(--ease);
+  }
+
+  .menu-open .hero__logo,
+  .menu-open .hero__bottom {
+    opacity: 0;
+    transform: scale(0.96);
+    filter: blur(6px);
   }
 
   .hero__top { position: relative; z-index: 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
 }
