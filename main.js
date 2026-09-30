@@ -372,80 +372,85 @@ function whileVisible(el, onEnter, onLeave) {
   }, function () { running = false; });
 })();
 
-// Testimonials: each quote lights up word by word, holds, then hands over
-// to the next; the tab bars show how long is left. Tabs switch directly.
+// Testimonials: the section pins and the scroll drives it. In each
+// testimonial's stretch the words light up first, like a subtitle being
+// read, then the track slides sideways to the next one.
 (function () {
   var root = document.querySelector(".tst");
   if (!root) return;
 
+  var track = root.querySelector(".tst__track");
   var items = [].slice.call(root.querySelectorAll(".tst__item"));
   var tabs = [].slice.call(root.querySelectorAll(".tst__tab"));
-  var durations = [];
+  var n = items.length;
+  var READ = 0.6; // share of each stretch spent lighting words; the rest slides
 
-  items.forEach(function (item, i) {
+  var words = items.map(function (item) {
     var q = item.querySelector(".tst__quote");
-    var words = q.textContent.trim().split(/\s+/);
-    q.innerHTML = words.map(function (w, n) {
-      return '<span class="w" style="--i: ' + n + '">' + w + "</span>";
+    q.innerHTML = q.textContent.trim().split(/\s+/).map(function (w) {
+      return '<span class="w">' + w + "</span>";
     }).join(" ");
-    item.style.setProperty("--n", words.length);
-    // time to "read" the words, then a pause to take it in
-    durations[i] = words.length * 70 + 5200;
+    return [].slice.call(q.querySelectorAll(".w"));
   });
+  var lit = items.map(function () { return -1; });
+  var active = -1;
 
-  var current = 0;
-  var elapsed = 0;
-  var visible = false;
-  var last = 0;
+  function stretch() { return window.innerHeight * 0.9; }
 
-  function show(i) {
-    items[current].classList.remove("is-active");
-    items[current].hidden = true;
-    tabs[current].classList.remove("is-active");
-    tabs[current].setAttribute("aria-selected", "false");
-    tabs[current].style.setProperty("--progress", 0);
-
-    current = i;
-    elapsed = 0;
-    items[i].hidden = false;
-    void items[i].offsetWidth; // restart the word sequence
-    items[i].classList.add("is-active");
-    tabs[i].classList.add("is-active");
-    tabs[i].setAttribute("aria-selected", "true");
+  function size() {
+    root.style.setProperty("--tst-h", (window.innerHeight + n * stretch()) + "px");
+    update();
   }
 
-  tabs.forEach(function (tab, i) {
-    tab.addEventListener("click", function () { if (i !== current) show(i); });
-  });
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
-  function tick(now) {
-    if (!visible) return;
-    var dt = last ? now - last : 0;
-    last = now;
-    elapsed += dt;
-    var p = Math.min(elapsed / durations[current], 1);
-    tabs[current].style.setProperty("--progress", p.toFixed(4));
-    if (p >= 1) show((current + 1) % items.length);
-    requestAnimationFrame(tick);
-  }
+  function update() {
+    var top = root.getBoundingClientRect().top;
+    var P = Math.min(Math.max(-top / stretch(), 0), n); // 0..n through the section
 
-  if (reducedMotion) return;
+    // Slide position: move from i to i+1 during the last part of stretch i.
+    var i = Math.min(Math.floor(P), n - 1);
+    var local = P - i;
+    var slide = i < n - 1 ? ease(Math.min(Math.max((local - READ) / (1 - READ), 0), 1)) : 0;
+    track.style.setProperty("--tx", (i + slide).toFixed(4));
 
-  var started = false;
+    items.forEach(function (item, k) {
+      var l = Math.min(Math.max(P - k, 0), 1);
+      var count = Math.round(Math.min(l / READ, 1) * words[k].length);
+      if (count !== lit[k]) {
+        words[k].forEach(function (w, j) { w.classList.toggle("is-lit", j < count); });
+        lit[k] = count;
+      }
+      tabs[k].style.setProperty("--progress", l.toFixed(4));
+    });
 
-  whileVisible(root, function () {
-    if (visible) return;
-    visible = true;
-    last = 0;
-    // Play the first quote's word sequence when it's actually seen.
-    if (!started) {
-      started = true;
-      items[0].classList.remove("is-active");
-      void items[0].offsetWidth;
-      items[0].classList.add("is-active");
+    var now = Math.min(Math.round(i + slide), n - 1);
+    if (now !== active) {
+      tabs.forEach(function (t, k) {
+        t.classList.toggle("is-active", k === now);
+        t.setAttribute("aria-selected", String(k === now));
+      });
+      active = now;
     }
-    requestAnimationFrame(tick);
-  }, function () { visible = false; });
+  }
+
+  // Clicking a client scrolls to where their quote is fully lit.
+  tabs.forEach(function (tab, k) {
+    tab.addEventListener("click", function () {
+      var y = root.getBoundingClientRect().top + window.scrollY + (k + READ) * stretch();
+      window.scrollTo({ top: y, behavior: reducedMotion ? "auto" : "smooth" });
+    });
+  });
+
+  var ticking = false;
+  window.addEventListener("scroll", function () {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(function () { update(); ticking = false; });
+    }
+  }, { passive: true });
+  window.addEventListener("resize", size);
+  size();
 })();
 
 // Mobile menu

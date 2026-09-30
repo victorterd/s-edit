@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=19">
+  <link rel="stylesheet" href="styles.css?v=21">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="bg" aria-hidden="true">
-    <video class="bg__video" src="assets/background.mp4?v=19#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
+    <video class="bg__video" src="assets/background.mp4?v=21#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
     <div class="bg__shade"></div>
   </div>
 
@@ -223,6 +223,7 @@
   </section>
 
   <section class="tst" id="testimoniale" aria-labelledby="tst-title" data-header="ink">
+    <div class="tst__pin">
     <h2 class="tst__title split" id="tst-title" data-reveal>
       <span class="word"><span>Ce</span></span>
       <span class="word"><span>spun</span></span>
@@ -231,18 +232,20 @@
 
     <div class="tst__body" data-reveal>
       <div class="tst__stage">
-        <figure class="tst__item is-active" id="tst-0" role="tabpanel" aria-labelledby="tst-tab-0">
+        <div class="tst__track">
+        <figure class="tst__item" id="tst-0" aria-labelledby="tst-tab-0">
           <blockquote class="tst__quote">„Au luat filmările brute dintr-o zi întreagă și le-au transformat într-un clip pe care oamenii chiar îl urmăresc până la final.”</blockquote>
           <figcaption class="tst__who">Nume Prenume, Fondator, brand</figcaption>
         </figure>
-        <figure class="tst__item" id="tst-1" role="tabpanel" aria-labelledby="tst-tab-1" hidden>
+        <figure class="tst__item" id="tst-1" aria-labelledby="tst-tab-1">
           <blockquote class="tst__quote">„Comunicarea a fost simplă, termenele respectate, iar fiecare revizie a venit mai repede decât ne așteptam. Acum le trimitem tot conținutul.”</blockquote>
           <figcaption class="tst__who">Nume Prenume, Marketing, agenție</figcaption>
         </figure>
-        <figure class="tst__item" id="tst-2" role="tabpanel" aria-labelledby="tst-tab-2" hidden>
+        <figure class="tst__item" id="tst-2" aria-labelledby="tst-tab-2">
           <blockquote class="tst__quote">„Subtitrările, sunetul, ritmul, totul e gândit pentru platforma pe care publicăm. Se vede diferența din primele trei secunde.”</blockquote>
           <figcaption class="tst__who">Nume Prenume, Creator de conținut</figcaption>
         </figure>
+        </div>
       </div>
 
       <div class="tst__tabs" role="tablist" aria-label="Testimoniale">
@@ -263,6 +266,7 @@
         </button>
       </div>
     </div>
+    </div>
   </section>
 
   <div class="menu" id="menu" aria-hidden="true" inert>
@@ -274,6 +278,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=19" defer></script>
+  <script src="main.js?v=21" defer></script>
 </body>
 </html>
