@@ -125,6 +125,85 @@ a { color: inherit; text-decoration: none; }
 
 .burger { display: none; }
 
+/* ---------- Preloader ---------- */
+
+.preloader { display: none; }
+
+.js .preloader {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.preloader__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  transition: opacity 0.9s var(--ease);
+}
+
+/* Same size as the hero logo, centred in the viewport; JS slides it into place. */
+.preloader__logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(var(--logo-w), calc((100svh - 2 * var(--pad-y) - 120px) * 672 / 351));
+  max-width: calc(100vw - 2 * var(--pad-x));
+  height: auto;
+  opacity: 0.75;
+  overflow: visible;
+  transform: translate(-50%, -50%);
+  transform-origin: 0 0;
+}
+
+.preloader__logo path {
+  fill: var(--fg);
+  fill-opacity: 0;
+  stroke: var(--fg);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation:
+    logo-draw 1.6s var(--ease) calc(var(--i) * 0.12s) forwards,
+    logo-fill 0.8s ease calc(1.2s + var(--i) * 0.08s) forwards;
+}
+
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+@keyframes logo-fill { to { fill-opacity: 1; stroke-opacity: 0; } }
+
+.preloader__count {
+  position: absolute;
+  right: var(--pad-x);
+  bottom: var(--pad-y);
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.4s ease;
+}
+
+.preloader.is-leaving .preloader__bg,
+.preloader.is-leaving .preloader__count { opacity: 0; }
+
+/* Hero waits behind the preloader, then settles in. */
+.js .hero__logo img { visibility: hidden; }
+.js.is-loaded .hero__logo img { visibility: visible; }
+
+.js .hero__top,
+.js .hero__bottom {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.8s ease, transform 0.8s var(--ease);
+}
+
+.js.is-loaded .hero__top,
+.js.is-loaded .hero__bottom {
+  opacity: 1;
+  transform: none;
+}
+
+.js.is-loaded .hero__bottom { transition-delay: 0.12s; }
+
 /* ---------- Mobile ---------- */
 
 @media (max-width: 767px) {
@@ -142,6 +221,8 @@ a { color: inherit; text-decoration: none; }
   .br-desktop { display: none; }
 
   .hero__logo img { width: 100%; }
+
+  .preloader__logo { width: calc(100vw - 2 * var(--pad-x)); }
 
   /* ----- Hamburger: two lines that cross into an X ----- */
 
@@ -268,5 +349,11 @@ a { color: inherit; text-decoration: none; }
   *::after {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
+  }
+
+  .preloader__logo path {
+    animation: none;
+    fill-opacity: 1;
+    stroke: none;
   }
 }

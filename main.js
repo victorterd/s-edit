@@ -1,3 +1,64 @@
+// Preloader: the logo draws itself while the page and background video load,
+// then slides into the hero logo's exact spot as the curtain lifts.
+(function () {
+  var root = document.documentElement;
+  var pre = document.querySelector(".preloader");
+  var logo = pre.querySelector(".preloader__logo");
+  var num = pre.querySelector(".preloader__num");
+  var target = document.querySelector(".hero__logo img");
+  var video = document.querySelector(".bg__video");
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MIN = reduced ? 300 : 2200; // let the draw animation finish
+  var MAX = 6000; // never hold the page longer than this
+  var start = performance.now();
+  var loaded = false;
+
+  var pageLoaded = new Promise(function (resolve) {
+    if (document.readyState === "complete") resolve();
+    else window.addEventListener("load", resolve, { once: true });
+  });
+  var videoReady = new Promise(function (resolve) {
+    if (video.readyState >= 3) resolve();
+    video.addEventListener("canplay", resolve, { once: true });
+    video.addEventListener("error", resolve, { once: true });
+  });
+  Promise.race([
+    Promise.all([pageLoaded, videoReady]),
+    new Promise(function (resolve) { setTimeout(resolve, MAX); }),
+  ]).then(function () { loaded = true; });
+
+  var shown = 0;
+  function tick(now) {
+    var t = Math.min((now - start) / MIN, 1);
+    var goal = t * (loaded ? 100 : 90);
+    shown += (goal - shown) * 0.12;
+    if (loaded && t === 1 && shown > 99.5) shown = 100;
+    num.textContent = Math.floor(shown);
+    if (shown < 100) requestAnimationFrame(tick);
+    else leave();
+  }
+  requestAnimationFrame(tick);
+
+  function leave() {
+    // FLIP the preloader logo onto the hero logo.
+    var from = logo.getBoundingClientRect();
+    var to = target.getBoundingClientRect();
+    var scale = to.width / from.width;
+    logo.style.transition = "transform 1s cubic-bezier(0.76, 0, 0.24, 1)";
+    logo.style.transform =
+      "translate(" + (to.left - from.left - from.width / 2) + "px, " +
+      (to.top - from.top - from.height / 2) + "px) scale(" + scale + ")";
+
+    pre.classList.add("is-leaving");
+
+    setTimeout(function () {
+      root.classList.add("is-loaded");
+      pre.remove();
+    }, reduced ? 50 : 1000);
+  }
+})();
+
 // Background video. Mobile browsers can block autoplay (iOS Low Power Mode,
 // Android Data Saver), so show the first frame as soon as it's decoded and
 // retry playback on the first touch or when the tab becomes visible again.
