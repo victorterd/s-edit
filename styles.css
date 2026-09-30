@@ -704,6 +704,92 @@ a { color: inherit; text-decoration: none; }
   .js .fx.is-in:hover img { transform: scale(1.05); }
 }
 
+/* ---------- Marquee ---------- */
+
+.mq {
+  position: relative;
+  z-index: 1;
+  padding: 120px 0 132px;
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mq::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.mq__row {
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.mq__row--a { font-size: max(72px, calc(150 / 1440 * 100vw)); line-height: 1.1; }
+
+.mq__row--b {
+  margin-top: 28px;
+  font-size: max(30px, calc(56 / 1440 * 100vw));
+  font-style: italic;
+  line-height: 1.2;
+  color: rgba(22, 20, 18, 0.55);
+}
+
+.mq__inner {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.mq__group {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.mq__word { padding: 0 0.28em; }
+.mq__phrase { padding: 0 0.5em; }
+
+/* Little film frames between the words. */
+.mq__frame {
+  flex: none;
+  height: 0.62em;
+  border-radius: 0.08em;
+  overflow: hidden;
+  background: #d9d3c9;
+  transform: rotate(var(--r, -4deg));
+  transition: transform 0.6s var(--ease-out);
+}
+
+.mq__frame--h { aspect-ratio: 16 / 9; --r: 3deg; }
+.mq__frame--v { aspect-ratio: 9 / 16; height: 0.8em; }
+
+.mq__frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mq:hover .mq__frame { transform: rotate(0deg) scale(1.08); }
+
+.mq__dot {
+  flex: none;
+  width: 0.22em;
+  height: 0.22em;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 /* ---------- Mobile ---------- */
 
 @media (max-width: 767px) {
@@ -757,6 +843,9 @@ a { color: inherit; text-decoration: none; }
   .reel__bar { left: 10px; right: 10px; bottom: 10px; }
 
   .fx-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  .mq { padding: 80px 0 88px; }
+  .mq__row--b { margin-top: 16px; }
 
   .timeline__track { height: 48px; }
 

@@ -305,6 +305,73 @@ function whileVisible(el, onEnter, onLeave) {
   render();
 })();
 
+// Marquee: two rows drift in opposite directions. Scrolling speeds them up
+// and flips them to follow the scroll direction; hovering slows them down.
+(function () {
+  var section = document.querySelector(".mq");
+  if (!section) return;
+
+  var rows = [].slice.call(section.querySelectorAll(".mq__row")).map(function (row) {
+    return {
+      inner: row.querySelector(".mq__inner"),
+      group: row.querySelector(".mq__group"),
+      speed: parseFloat(row.dataset.speed),
+      dir: parseFloat(row.dataset.dir),
+      x: 0,
+    };
+  });
+
+  if (reducedMotion) return;
+
+  var running = false;
+  var last = 0;
+  var lastY = window.scrollY;
+  var boost = 0;       // extra speed from scrolling, decays over time
+  var flip = 1;        // 1 = scrolling down, -1 = scrolling up
+  var slow = 1;        // eases toward 0.25 on hover
+  var hovering = false;
+
+  window.addEventListener("scroll", function () {
+    var dy = window.scrollY - lastY;
+    lastY = window.scrollY;
+    if (dy) flip = dy > 0 ? 1 : -1;
+    boost = Math.min(boost + Math.abs(dy) * 0.6, 900);
+  }, { passive: true });
+
+  section.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hovering = true; });
+  section.addEventListener("pointerleave", function () { hovering = false; });
+
+  function frame(now) {
+    if (!running) return;
+    var dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+    last = now;
+    boost *= Math.pow(0.04, dt); // fades out within about a second
+    slow += ((hovering ? 0.25 : 1) - slow) * Math.min(dt * 5, 1);
+
+    rows.forEach(function (r) {
+      var w = r.group.offsetWidth;
+      if (!w) return;
+      r.x += (r.speed + boost) * slow * r.dir * flip * dt;
+      // keep x within one group width so the loop is seamless
+      if (r.x <= -w) r.x += w;
+      if (r.x > 0) r.x -= w;
+      var skew = Math.max(Math.min(boost * 0.01, 6), 0) * -r.dir * flip;
+      r.inner.style.transform = "translate3d(" + r.x.toFixed(2) + "px,0,0) skewX(" + skew.toFixed(2) + "deg)";
+    });
+    requestAnimationFrame(frame);
+  }
+
+  // Row b starts offset so the two rows don't line up.
+  rows[1] && (rows[1].x = -rows[1].group.offsetWidth / 2);
+
+  whileVisible(section, function () {
+    if (running) return;
+    running = true;
+    last = 0;
+    requestAnimationFrame(frame);
+  }, function () { running = false; });
+})();
+
 // Mobile menu
 (function () {
   var burger = document.querySelector(".burger");
