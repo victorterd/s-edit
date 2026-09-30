@@ -312,15 +312,15 @@ a { color: inherit; text-decoration: none; }
   text-transform: none;
 }
 
-/* Each word rises out of a mask that clips only its bottom edge. */
-.about__title .word {
+/* Serif titles: each word rises out of a mask that clips only its bottom edge. */
+.split .word {
   display: block;
   flex-shrink: 0;
   padding-bottom: 0.12em;
   clip-path: inset(-50% -20% 0 -20%);
 }
 
-.about__title .word > span { display: block; }
+.split .word > span { display: block; }
 
 .about__media {
   margin: 0;
@@ -362,14 +362,15 @@ a { color: inherit; text-decoration: none; }
 
 /* ----- Scroll reveals (only when JS can undo them) ----- */
 
-.js .about__title .word > span {
+.js .split .word > span {
   transform: translateY(105%);
   transition: transform 1.1s var(--ease-out);
 }
 
-.js .about__title .word:nth-child(2) > span { transition-delay: 0.08s; }
+.js .split .word:nth-child(2) > span { transition-delay: 0.08s; }
+.js .split .word:nth-child(3) > span { transition-delay: 0.16s; }
 
-.js .about__title.is-in .word > span { transform: none; }
+.js .split.is-in .word > span { transform: none; }
 
 .js .about__media {
   clip-path: inset(100% 0 0 0 round 6px);
@@ -409,6 +410,401 @@ a { color: inherit; text-decoration: none; }
   transform: none;
 }
 
+/* ---------- Portfolio ---------- */
+
+.work {
+  position: relative;
+  z-index: 1;
+  padding: 160px var(--pad-x) 180px;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: clip;
+}
+
+.work__title,
+.cat__title {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.22em;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+.work__title {
+  justify-content: center;
+  margin-bottom: 140px;
+  font-size: max(76px, calc(136 / 1440 * 100vw));
+}
+
+.cat + .cat { margin-top: 180px; }
+
+.cat__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.cat__title { font-size: max(52px, calc(88 / 1440 * 100vw)); }
+
+.cat__desc {
+  max-width: 300px;
+  margin: 0 0 0.6em;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.js .cat__desc {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 1s ease 0.25s, transform 1.2s var(--ease-out) 0.25s;
+}
+
+.js .cat__desc.is-in { opacity: 1; transform: none; }
+
+/* ----- Short-form: a rail of vertical frames that drifts with the scroll ----- */
+
+.reels { margin: 0 calc(var(--pad-x) * -1); }
+
+.reels__track {
+  display: flex;
+  gap: 20px;
+  padding: 0 var(--pad-x) 56px;
+  width: max-content;
+  transform: translateX(calc(var(--drift, 0) * -1px));
+  will-change: transform;
+}
+
+.reel {
+  position: relative;
+  flex: none;
+  width: max(200px, calc(232 / 1440 * 100vw));
+  aspect-ratio: 9 / 16;
+  margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1c1b1a;
+  transition: opacity 0.5s ease, transform 0.8s var(--ease-out);
+}
+
+.reel:nth-child(even) { margin-top: 56px; }
+
+.reel img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+
+.reel__time {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Progress bar along the bottom edge, like a story. */
+.reel__bar {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+
+.reel__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+@media (hover: hover) {
+  .reels__track:hover .reel:not(:hover) { opacity: 0.45; }
+  .reel:hover img { transform: scale(1.06); }
+  .reel:hover .reel__bar::after { animation: reel-play 3.2s linear forwards; }
+}
+
+@keyframes reel-play { to { transform: scaleX(1); } }
+
+.js .reel {
+  opacity: 0;
+  transform: translateY(80px);
+  transition:
+    opacity 0.9s ease calc(var(--i) * 0.07s),
+    transform 1.2s var(--ease-out) calc(var(--i) * 0.07s);
+}
+
+.js .reels.is-in .reel { opacity: 1; transform: none; }
+
+@media (hover: hover) {
+  .js .reels.is-in .reels__track:hover .reel:not(:hover) { opacity: 0.45; transition-delay: 0s; }
+}
+
+/* ----- Medium-form: an edit timeline driving a viewer ----- */
+
+/* Frame + controls fit in one screen, centred under the heading. */
+.timeline,
+.compare,
+.wave {
+  max-width: calc((100svh - 280px) * 16 / 9);
+  margin-inline: auto;
+}
+
+.timeline__viewer {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1c1b1a;
+}
+
+.timeline__viewer img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  visibility: hidden;
+}
+
+.timeline__viewer img.is-prev { visibility: visible; z-index: 1; }
+
+/* The incoming clip wipes in from the right, like a cut landing. */
+.timeline__viewer img.is-active {
+  visibility: visible;
+  z-index: 2;
+  animation: clip-in 0.9s var(--ease) both;
+}
+
+@keyframes clip-in {
+  from { clip-path: inset(0 0 0 100%); transform: scale(1.04); }
+  to { clip-path: inset(0 0 0 0); transform: scale(1); }
+}
+
+.timeline__meta {
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0 14px;
+}
+
+.timeline__tc {
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.timeline__track {
+  position: relative;
+  display: flex;
+  gap: 3px;
+  height: 64px;
+}
+
+.clip {
+  flex: var(--w) 1 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: var(--img) left center / auto 100% repeat-x;
+  cursor: pointer;
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  outline: 1px solid transparent;
+  outline-offset: 2px;
+  transition: opacity 0.4s ease, filter 0.4s ease, outline-color 0.4s ease;
+}
+
+.clip:hover { opacity: 0.8; filter: none; }
+
+.clip.is-active {
+  opacity: 1;
+  filter: none;
+  outline-color: rgba(255, 255, 255, 0.85);
+}
+
+.clip:focus-visible { outline-color: var(--fg); }
+
+/* Playhead: a hairline with a small cap, travelling across the track. */
+.timeline__head {
+  position: absolute;
+  top: -10px;
+  bottom: -6px;
+  left: 0;
+  width: 1px;
+  background: var(--fg);
+  pointer-events: none;
+  transform: translateX(var(--ph, 0px));
+}
+
+.timeline__head::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -5px;
+  border: 5px solid transparent;
+  border-top: 7px solid var(--fg);
+}
+
+.js .timeline {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease, transform 1.3s var(--ease-out);
+}
+
+.js .timeline.is-in { opacity: 1; transform: none; }
+
+/* ----- VFX & SFX: before/after split and a scrubbed waveform ----- */
+
+.compare {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #1c1b1a;
+  user-select: none;
+}
+
+.compare img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* The ungraded plate: flat, washed-out, like a log file straight off camera. */
+.compare__before {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--x)) 0 0);
+}
+
+.compare__before img { filter: saturate(0.25) contrast(0.68) brightness(1.18); }
+
+.compare__label {
+  position: absolute;
+  top: 18px;
+  transition: opacity 0.3s ease;
+}
+
+.compare__label--before { left: 20px; }
+.compare__label--after { right: 20px; }
+
+.compare__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--x);
+  width: 1px;
+  background: var(--fg);
+  pointer-events: none;
+}
+
+.compare__handle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--fg);
+  border-radius: 50%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='10' viewBox='0 0 22 10'%3E%3Cpath d='M5 0 0 5l5 5M17 0l5 5-5 5' fill='none' stroke='white'/%3E%3C/svg%3E") center / 22px 10px no-repeat,
+    rgba(12, 12, 12, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transform: translate(-50%, -50%);
+  transition: transform 0.4s var(--ease-out);
+}
+
+.compare:hover .compare__handle::after,
+.compare.is-dragging .compare__handle::after { transform: translate(-50%, -50%) scale(1.15); }
+
+.compare__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  touch-action: pan-y;
+}
+
+.compare:has(.compare__range:focus-visible) .compare__handle::after {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+.js .compare {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s ease, transform 1.3s var(--ease-out);
+}
+
+.js .compare.is-in { opacity: 1; transform: none; }
+
+.wave {
+  position: relative;
+  height: 72px;
+  margin-top: 28px;
+  container-type: inline-size;
+}
+
+.wave__bars {
+  position: absolute;
+  inset: 0;
+  width: 100cqw;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.wave__bars span {
+  flex: 1;
+  height: calc(var(--h) * 100%);
+  min-height: 2px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Played portion: the same bars in full white, uncovered by a moving edge. */
+.wave__played {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--fg);
+}
+
+.wave__played .wave__bars span { background: var(--fg); }
+
+.wave.is-playing .wave__played { animation: wave-play 9s linear infinite; }
+
+@keyframes wave-play {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.js .wave__bars span {
+  transform: scaleY(0.05);
+  transition: transform 0.9s var(--ease-out) calc(var(--i) * 6ms);
+}
+
+.js .wave.is-in .wave__bars span { transform: none; }
+
 /* ---------- Mobile ---------- */
 
 @media (max-width: 767px) {
@@ -432,6 +828,33 @@ a { color: inherit; text-decoration: none; }
   .about { padding-top: 112px; padding-bottom: 72px; }
   .about__inner { width: 100%; }
   .about__title { margin-bottom: 28px; }
+
+  .work { padding: 112px var(--pad-x) 120px; }
+  .work__title { margin-bottom: 80px; }
+  .cat + .cat { margin-top: 120px; }
+
+  .cat__head {
+    display: block;
+    margin-bottom: 28px;
+  }
+
+  .cat__desc { margin: 16px 0 0; }
+
+  /* The rail becomes a native swipe instead of scroll-linked drift. */
+  .reels {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .reels::-webkit-scrollbar { display: none; }
+
+  .reels__track { transform: none; gap: 12px; padding-bottom: 32px; }
+  .reel { width: 62vw; scroll-snap-align: center; }
+  .reel:nth-child(even) { margin-top: 32px; }
+
+  .timeline__track { height: 48px; }
+  .wave { height: 52px; }
 
   /* ----- Hamburger: two lines that cross into an X ----- */
 
@@ -559,6 +982,8 @@ a { color: inherit; text-decoration: none; }
   }
 
   .js .about__sig path { clip-path: none; }
+
+  .wave.is-playing .wave__played { animation: none; width: 40%; }
 
   .preloader__logo path {
     animation: none;

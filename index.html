@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=14">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="bg" aria-hidden="true">
-    <video class="bg__video" src="assets/background.mp4?v=12#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
+    <video class="bg__video" src="assets/background.mp4?v=14#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
     <div class="bg__shade"></div>
   </div>
 
@@ -61,9 +61,9 @@
     </footer>
   </main>
 
-  <section class="about" id="despre" aria-labelledby="despre-title">
+  <section class="about" id="despre" aria-labelledby="despre-title" data-header="ink">
     <div class="about__inner">
-      <h2 class="about__title" id="despre-title" data-reveal>
+      <h2 class="about__title split" id="despre-title" data-reveal>
         <span class="word"><span>Despre</span></span>
         <span class="word"><span>noi</span></span>
       </h2>
@@ -104,6 +104,116 @@
     </div>
   </section>
 
+  <section class="work" id="portofoliu" aria-labelledby="portofoliu-title">
+    <h2 class="work__title split" id="portofoliu-title" data-reveal>
+          <span class="word"><span>Portofoliu</span></span>
+    </h2>
+
+    <article class="cat cat--short">
+      <header class="cat__head">
+        <h3 class="cat__title split" data-reveal>
+          <span class="word"><span>Short-form</span></span>
+          <span class="word"><span>/</span></span>
+          <span class="word"><span>UGC</span></span>
+        </h3>
+        <p class="cat__desc" data-reveal>Reels, TikTok și UGC montate pentru primele trei secunde, cu ritm care ține privirea până la final.</p>
+      </header>
+
+      <div class="reels" data-reveal>
+        <div class="reels__track">
+          <figure class="reel" style="--i: 0">
+            <img src="assets/work/short-1.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:21</span>
+            <span class="reel__bar"></span>
+          </figure>
+          <figure class="reel" style="--i: 1">
+            <img src="assets/work/short-2.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:15</span>
+            <span class="reel__bar"></span>
+          </figure>
+          <figure class="reel" style="--i: 2">
+            <img src="assets/work/short-3.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:34</span>
+            <span class="reel__bar"></span>
+          </figure>
+          <figure class="reel" style="--i: 3">
+            <img src="assets/work/short-4.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:12</span>
+            <span class="reel__bar"></span>
+          </figure>
+          <figure class="reel" style="--i: 4">
+            <img src="assets/work/short-5.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:28</span>
+            <span class="reel__bar"></span>
+          </figure>
+          <figure class="reel" style="--i: 5">
+            <img src="assets/work/short-6.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
+            <span class="reel__time">0:19</span>
+            <span class="reel__bar"></span>
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat cat--medium">
+      <header class="cat__head">
+        <h3 class="cat__title split" data-reveal>
+          <span class="word"><span>Medium-form</span></span>
+        </h3>
+        <p class="cat__desc" data-reveal>Filme de brand, campanii și vloguri cu structură clară, ritm potrivit și o poveste care se simte.</p>
+      </header>
+
+      <div class="timeline" data-reveal>
+        <div class="timeline__viewer">
+            <img src="assets/work/medium-1.jpg" width="1280" height="720" decoding="async" alt="Salt flats" class="is-active">
+            <img src="assets/work/medium-2.jpg" width="1280" height="720" decoding="async" alt="Court side">
+            <img src="assets/work/medium-3.jpg" width="1280" height="720" decoding="async" alt="Open field">
+            <img src="assets/work/medium-4.jpg" width="1280" height="720" decoding="async" alt="Game night">
+            <img src="assets/work/medium-5.jpg" width="1280" height="720" decoding="async" alt="Hoops at dusk">
+        </div>
+        <div class="timeline__meta">
+          <span class="timeline__name" aria-live="polite">Salt flats</span>
+          <span class="timeline__tc">00:00:00:00</span>
+        </div>
+        <div class="timeline__track">
+            <button class="clip is-active" type="button" style="--w: 1.3; --img: url(assets/work/medium-1.jpg)" aria-label="Salt flats" aria-pressed="true"></button>
+            <button class="clip" type="button" style="--w: 0.9; --img: url(assets/work/medium-2.jpg)" aria-label="Court side" aria-pressed="false"></button>
+            <button class="clip" type="button" style="--w: 1.5; --img: url(assets/work/medium-3.jpg)" aria-label="Open field" aria-pressed="false"></button>
+            <button class="clip" type="button" style="--w: 0.8; --img: url(assets/work/medium-4.jpg)" aria-label="Game night" aria-pressed="false"></button>
+            <button class="clip" type="button" style="--w: 1.1; --img: url(assets/work/medium-5.jpg)" aria-label="Hoops at dusk" aria-pressed="false"></button>
+          <span class="timeline__head" aria-hidden="true"></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="cat cat--vfx">
+      <header class="cat__head">
+        <h3 class="cat__title split" data-reveal>
+          <span class="word"><span>VFX</span></span>
+          <span class="word"><span>&amp;</span></span>
+          <span class="word"><span>SFX</span></span>
+        </h3>
+        <p class="cat__desc" data-reveal>Compoziție, curățare de cadre, color grading și sound design care duc filmarea brută la rezultatul final.</p>
+      </header>
+
+      <div class="compare" data-reveal style="--x: 100%">
+        <img class="compare__after" src="assets/work/vfx-1.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Cadru final, după color grading și efecte">
+        <div class="compare__before" aria-hidden="true">
+          <img src="assets/work/vfx-1.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="">
+        </div>
+        <span class="compare__label compare__label--before" aria-hidden="true">Raw</span>
+        <span class="compare__label compare__label--after" aria-hidden="true">Final</span>
+        <span class="compare__handle" aria-hidden="true"></span>
+        <input class="compare__range" type="range" min="0" max="100" value="50" step="0.1" aria-label="Compară cadrul brut cu cel final">
+      </div>
+
+      <div class="wave" data-reveal aria-hidden="true">
+        <div class="wave__bars"></div>
+        <div class="wave__played"><div class="wave__bars"></div></div>
+      </div>
+    </article>
+  </section>
+
   <div class="menu" id="menu" aria-hidden="true" inert>
     <nav class="menu__links" aria-label="Meniu mobil">
       <a href="#portofoliu" style="--i: 0"><span>PORTOFOLIU</span></a>
@@ -113,6 +223,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=12" defer></script>
+  <script src="main.js?v=14" defer></script>
 </body>
 </html>

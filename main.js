@@ -102,20 +102,42 @@
   });
 })();
 
-// Hero recedes as the about section slides over it.
+// Scroll-linked effects: the hero recedes, the header switches ink/white,
+// and the short-form rail drifts sideways.
 (function () {
   var hero = document.querySelector(".hero");
   var header = document.querySelector(".site-header");
-  var about = document.querySelector(".about");
+  var inkSections = document.querySelectorAll('[data-header="ink"]');
+  var reels = document.querySelector(".reels");
+  var track = reels && reels.querySelector(".reels__track");
+  var desktop = window.matchMedia("(min-width: 768px)");
   var ticking = false;
 
   function update() {
-    var p = Math.min(Math.max(window.scrollY / window.innerHeight, 0), 1);
+    var vh = window.innerHeight;
+    var p = Math.min(Math.max(window.scrollY / vh, 0), 1);
     hero.style.setProperty("--p", p.toFixed(4));
 
-    // Header turns ink once the cream section has passed under its text.
+    // Header turns ink while a light section sits under its text.
     var line = header.firstElementChild.getBoundingClientRect();
-    header.classList.toggle("is-dark", about.getBoundingClientRect().top <= line.top + line.height / 2);
+    var mid = line.top + line.height / 2;
+    var ink = false;
+    inkSections.forEach(function (sec) {
+      var r = sec.getBoundingClientRect();
+      if (r.top <= mid && r.bottom >= mid) ink = true;
+    });
+    header.classList.toggle("is-dark", ink);
+
+    if (track) {
+      if (desktop.matches) {
+        var r = reels.getBoundingClientRect();
+        var t = Math.min(Math.max((vh - r.top) / (vh + r.height), 0), 1);
+        var max = Math.max(track.scrollWidth - reels.clientWidth, 0);
+        track.style.setProperty("--drift", (t * max).toFixed(1));
+      } else {
+        track.style.removeProperty("--drift");
+      }
+    }
     ticking = false;
   }
 
@@ -161,6 +183,156 @@
       });
     }
   }, { passive: true });
+})();
+
+var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Run a callback while an element is on screen, and another when it leaves.
+function whileVisible(el, onEnter, onLeave) {
+  if (!("IntersectionObserver" in window)) return onEnter();
+  new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { (e.isIntersecting ? onEnter : onLeave)(); });
+  }, { threshold: 0.25 }).observe(el);
+}
+
+// Medium-form timeline: the playhead runs through each clip and cuts to the
+// next one; clicking a clip jumps there, at the point you clicked.
+(function () {
+  var root = document.querySelector(".timeline");
+  if (!root) return;
+
+  var clips = [].slice.call(root.querySelectorAll(".clip"));
+  var frames = [].slice.call(root.querySelectorAll(".timeline__viewer img"));
+  var head = root.querySelector(".timeline__head");
+  var name = root.querySelector(".timeline__name");
+  var tc = root.querySelector(".timeline__tc");
+
+  var FPS = 24;
+  var weights = clips.map(function (c) { return parseFloat(c.style.getPropertyValue("--w")) || 1; });
+  var starts = weights.map(function (_, i) {
+    return weights.slice(0, i).reduce(function (a, b) { return a + b; }, 0);
+  });
+
+  var current = 0;
+  var progress = 0;
+  var visible = false;
+  var hovering = false;
+  var last = 0;
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function timecode(seconds) {
+    var f = Math.floor((seconds % 1) * FPS);
+    var s = Math.floor(seconds);
+    return pad(Math.floor(s / 3600)) + ":" + pad(Math.floor(s / 60) % 60) + ":" + pad(s % 60) + ":" + pad(f);
+  }
+
+  function render() {
+    var c = clips[current];
+    head.style.setProperty("--ph", (c.offsetLeft + progress * c.offsetWidth).toFixed(1) + "px");
+    // Each unit of clip width stands for 18 seconds of footage.
+    tc.textContent = timecode((starts[current] + progress * weights[current]) * 18);
+  }
+
+  function select(i, at) {
+    if (i !== current) {
+      frames.forEach(function (f) { f.classList.remove("is-prev"); });
+      frames[current].classList.remove("is-active");
+      frames[current].classList.add("is-prev");
+      frames[i].classList.remove("is-active");
+      void frames[i].offsetWidth; // restart the wipe
+      frames[i].classList.add("is-active");
+
+      clips[current].classList.remove("is-active");
+      clips[current].setAttribute("aria-pressed", "false");
+      clips[i].classList.add("is-active");
+      clips[i].setAttribute("aria-pressed", "true");
+      name.textContent = clips[i].getAttribute("aria-label");
+      current = i;
+    }
+    progress = at || 0;
+    render();
+  }
+
+  function tick(now) {
+    if (!visible) return;
+    var dt = last ? now - last : 0;
+    last = now;
+    if (!hovering && !reducedMotion) {
+      progress += dt / (weights[current] * 3200);
+      if (progress >= 1) select((current + 1) % clips.length);
+      else render();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  clips.forEach(function (clip, i) {
+    clip.addEventListener("click", function (e) {
+      var r = clip.getBoundingClientRect();
+      var at = e.clientX ? Math.min(Math.max((e.clientX - r.left) / r.width, 0), 0.98) : 0;
+      select(i, at);
+    });
+  });
+
+  root.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hovering = true; });
+  root.addEventListener("pointerleave", function () { hovering = false; });
+  window.addEventListener("resize", render);
+
+  whileVisible(root, function () {
+    if (visible) return;
+    visible = true;
+    last = 0;
+    requestAnimationFrame(tick);
+  }, function () { visible = false; });
+
+  render();
+})();
+
+// VFX before/after: drag (or use arrow keys) to move the split. On first view
+// the split sweeps in from the right so the change is visible straight away.
+(function () {
+  var root = document.querySelector(".compare");
+  if (!root) return;
+  var range = root.querySelector(".compare__range");
+  var shown = false;
+
+  function set(v) { root.style.setProperty("--x", v + "%"); }
+
+  range.addEventListener("input", function () { set(range.value); });
+  range.addEventListener("pointerdown", function () { root.classList.add("is-dragging"); });
+  window.addEventListener("pointerup", function () { root.classList.remove("is-dragging"); });
+
+  whileVisible(root, function () {
+    if (shown) return;
+    shown = true;
+    if (reducedMotion) return set(50);
+    var start = performance.now();
+    (function sweep(now) {
+      var t = Math.min((now - start) / 1600, 1);
+      var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      set((100 - 50 * e).toFixed(2));
+      range.value = 100 - 50 * e;
+      if (t < 1) requestAnimationFrame(sweep);
+    })(start);
+  }, function () {});
+})();
+
+// SFX waveform: deterministic bars, played back only while on screen.
+(function () {
+  var wave = document.querySelector(".wave");
+  if (!wave) return;
+  // Roughly one bar every 8px keeps bars legible at any width.
+  var count = Math.min(Math.max(Math.round(wave.clientWidth / 8), 40), 120);
+  var html = "";
+  for (var i = 0; i < count; i++) {
+    var h = 0.18 + 0.5 * Math.abs(Math.sin(i * 0.37) * Math.cos(i * 0.11)) +
+      0.32 * Math.abs(Math.sin(i * 1.7 + 1)) * (i % 7 === 0 ? 1 : 0.55);
+    html += '<span style="--h: ' + Math.min(h, 1).toFixed(3) + "; --i: " + i + '"></span>';
+  }
+  wave.querySelectorAll(".wave__bars").forEach(function (el) { el.innerHTML = html; });
+
+  whileVisible(wave, function () { wave.classList.add("is-playing"); },
+    function () { wave.classList.remove("is-playing"); });
 })();
 
 // Mobile menu
