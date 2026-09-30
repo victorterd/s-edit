@@ -24,6 +24,9 @@
 
   play();
 
+  // Never leave the cover up for long, even if no video event fires.
+  setTimeout(show, 2500);
+
   ["touchstart", "pointerdown", "scroll"].forEach(function (type) {
     window.addEventListener(type, function () {
       if (video.paused) play();

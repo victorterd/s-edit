@@ -44,11 +44,19 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0;
+}
+
+/* The video itself must stay visible: mobile browsers refuse to autoplay
+   a video with opacity 0. Fade a solid cover off it instead. */
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
   transition: opacity 1.2s ease;
 }
 
-.bg.is-playing .bg__video { opacity: 1; }
+.bg.is-playing::after { opacity: 0; }
 
 .bg__shade {
   position: absolute;
