@@ -105,11 +105,17 @@
 // Hero recedes as the about section slides over it.
 (function () {
   var hero = document.querySelector(".hero");
+  var header = document.querySelector(".site-header");
+  var about = document.querySelector(".about");
   var ticking = false;
 
   function update() {
     var p = Math.min(Math.max(window.scrollY / window.innerHeight, 0), 1);
     hero.style.setProperty("--p", p.toFixed(4));
+
+    // Header turns ink once the cream section has passed under its text.
+    var line = header.firstElementChild.getBoundingClientRect();
+    header.classList.toggle("is-dark", about.getBoundingClientRect().top <= line.top + line.height / 2);
     ticking = false;
   }
 
@@ -119,6 +125,7 @@
       requestAnimationFrame(update);
     }
   }, { passive: true });
+  window.addEventListener("resize", update);
   update();
 })();
 
