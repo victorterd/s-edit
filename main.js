@@ -1,54 +1,18 @@
-// Background video: muted, looping YouTube embed with no player UI.
-// It fades in only once it's actually playing, so YouTube's loading overlay never shows.
+// Background video: fade in once it's actually playing.
 (function () {
-  var wrap = document.querySelector(".bg__video");
-  var bg = wrap.parentElement;
-  var videoId = wrap.dataset.videoId;
+  var video = document.querySelector(".bg__video");
+  var bg = video.parentElement;
 
-  function hideCaptions(player) {
-    try {
-      player.unloadModule("captions");
-      player.unloadModule("cc");
-    } catch (err) {}
+  function show() {
+    bg.classList.add("is-playing");
   }
 
-  window.onYouTubeIframeAPIReady = function () {
-    new YT.Player("bg-player", {
-      videoId: videoId,
-      playerVars: {
-        autoplay: 1,
-        mute: 1,
-        controls: 0,
-        loop: 1,
-        playlist: videoId,
-        playsinline: 1,
-        rel: 0,
-        disablekb: 1,
-        fs: 0,
-        iv_load_policy: 3,
-        modestbranding: 1,
-        cc_load_policy: 0,
-      },
-      events: {
-        onReady: function (e) {
-          e.target.mute();
-          hideCaptions(e.target);
-          e.target.playVideo();
-        },
-        onStateChange: function (e) {
-          if (e.data === YT.PlayerState.PLAYING) {
-            hideCaptions(e.target);
-            bg.classList.add("is-playing");
-          }
-          if (e.data === YT.PlayerState.ENDED) e.target.seekTo(0);
-        },
-      },
-    });
-  };
+  if (!video.paused && video.readyState > 2) show();
+  video.addEventListener("playing", show, { once: true });
 
-  var tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
+  // Some browsers ignore the autoplay attribute until play() is called.
+  var p = video.play();
+  if (p && p.catch) p.catch(function () {});
 })();
 
 // Mobile menu
