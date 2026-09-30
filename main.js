@@ -109,6 +109,7 @@
   var header = document.querySelector(".site-header");
   var inkSections = document.querySelectorAll('[data-header="ink"]');
   var reels = document.querySelector(".reels");
+  var footer = document.querySelector(".footer");
   var track = reels && reels.querySelector(".reels__track");
   var desktop = window.matchMedia("(min-width: 768px)");
   var ticking = false;
@@ -117,6 +118,9 @@
     var vh = window.innerHeight;
     var p = Math.min(Math.max(window.scrollY / vh, 0), 1);
     hero.style.setProperty("--p", p.toFixed(4));
+    // The pinned hero sits behind everything; hide it once it's covered so it
+    // doesn't show through the transparent footer.
+    hero.style.visibility = p >= 1 ? "hidden" : "";
 
     // Header turns ink while a light section sits under its text.
     var line = header.firstElementChild.getBoundingClientRect();
@@ -127,6 +131,13 @@
       if (r.top <= mid && r.bottom >= mid) ink = true;
     });
     header.classList.toggle("is-dark", ink);
+
+    if (footer) {
+      var fr = footer.getBoundingClientRect();
+      var f = Math.min(Math.max((vh - fr.top) / fr.height, 0), 1);
+      footer.style.setProperty("--f", f.toFixed(4));
+      header.classList.toggle("is-away", fr.top < line.bottom + 24);
+    }
 
     if (track) {
       var r = reels.getBoundingClientRect();
@@ -451,6 +462,42 @@ function whileVisible(el, onEnter, onLeave) {
   }, { passive: true });
   window.addEventListener("resize", size);
   size();
+})();
+
+// Contact form: no backend yet, so it validates and then opens the visitor's
+// email app with the message filled in.
+(function () {
+  var form = document.querySelector(".form");
+  if (!form) return;
+  var status = form.querySelector(".form__status");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var ok = true;
+    form.querySelectorAll(".field").forEach(function (field) {
+      var input = field.querySelector("input, textarea");
+      var valid = input.checkValidity() && input.value.trim() !== "";
+      field.classList.toggle("is-invalid", !valid);
+      if (!valid && ok) { input.focus(); ok = false; }
+    });
+    if (!ok) {
+      status.textContent = "Completează numele, un email valid și mesajul.";
+      return;
+    }
+
+    var data = new FormData(form);
+    var types = data.getAll("type").join(", ") || "Nespecificat";
+    var body = "Nume: " + data.get("name") + "\nEmail: " + data.get("email") +
+      "\nProiect: " + types + "\n\n" + data.get("message");
+    window.location.href = "mailto:hello@s-edit.ro?subject=" +
+      encodeURIComponent("Proiect nou: " + types) + "&body=" + encodeURIComponent(body);
+    status.textContent = "Se deschide aplicația de email cu mesajul completat.";
+  });
+
+  form.addEventListener("input", function (e) {
+    var field = e.target.closest(".field");
+    if (field) field.classList.remove("is-invalid");
+  });
 })();
 
 // Mobile menu

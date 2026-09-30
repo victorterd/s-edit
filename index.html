@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=21">
+  <link rel="stylesheet" href="styles.css?v=23">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="bg" aria-hidden="true">
-    <video class="bg__video" src="assets/background.mp4?v=21#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
+    <video class="bg__video" src="assets/background.mp4?v=23#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
     <div class="bg__shade"></div>
   </div>
 
@@ -269,6 +269,83 @@
     </div>
   </section>
 
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <h2 class="contact__title split" id="contact-title" data-reveal>
+      <span class="word"><span>Hai</span></span>
+      <span class="word"><span>să</span></span>
+      <span class="word"><span>vorbim</span></span>
+    </h2>
+
+    <div class="contact__grid">
+      <div class="contact__info" data-reveal>
+        <p class="contact__intro">Spune-ne ce vrei să construim împreună. Răspundem în cel mult o zi lucrătoare.</p>
+        <dl class="contact__details">
+          <div>
+            <dt>Telefon</dt>
+            <dd><a class="link" href="tel:+40700000000">+40 700 000 000</a></dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a class="link" href="mailto:hello@s-edit.ro">hello@s-edit.ro</a></dd>
+          </div>
+        </dl>
+      </div>
+
+      <form class="form" data-reveal novalidate>
+        <div class="form__row">
+          <label class="field">
+            <span class="field__label">Nume</span>
+            <input class="field__input" type="text" name="name" autocomplete="name" required>
+          </label>
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input class="field__input" type="email" name="email" autocomplete="email" required>
+          </label>
+        </div>
+
+        <fieldset class="chips">
+          <legend class="field__label">Ce proiect ai?</legend>
+          <label class="chip"><input type="checkbox" name="type" value="Short-form / UGC"><span>Short-form / UGC</span></label>
+          <label class="chip"><input type="checkbox" name="type" value="Medium-form"><span>Medium-form</span></label>
+          <label class="chip"><input type="checkbox" name="type" value="VFX & SFX"><span>VFX &amp; SFX</span></label>
+          <label class="chip"><input type="checkbox" name="type" value="Altceva"><span>Altceva</span></label>
+        </fieldset>
+
+        <label class="field">
+          <span class="field__label">Mesaj</span>
+          <textarea class="field__input field__input--area" name="message" rows="4" required></textarea>
+        </label>
+
+        <div class="form__foot">
+          <button class="form__submit" type="submit"><span>Trimite mesajul</span></button>
+          <p class="form__status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <nav class="footer__links" aria-label="Subsol">
+      <ul>
+        <li><a class="link" href="/">Acasă</a></li>
+        <li><a class="link" href="#portofoliu">Portofoliu</a></li>
+        <li><a class="link" href="#contact">Contact</a></li>
+      </ul>
+      <ul>
+        <li><a class="link" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a class="link" href="mailto:hello@s-edit.ro">Email me</a></li>
+      </ul>
+      <ul>
+        <li><a class="link" href="#">Termeni și condiții</a></li>
+        <li><a class="link" href="#">Politica de confidențialitate</a></li>
+      </ul>
+    </nav>
+
+    <div class="footer__logo" aria-hidden="true">
+      <img src="assets/logo.svg" width="672" height="351" alt="" loading="lazy">
+    </div>
+  </footer>
+
   <div class="menu" id="menu" aria-hidden="true" inert>
     <nav class="menu__links" aria-label="Meniu mobil">
       <a href="#portofoliu" style="--i: 0"><span>PORTOFOLIU</span></a>
@@ -278,6 +355,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=21" defer></script>
+  <script src="main.js?v=23" defer></script>
 </body>
 </html>
