@@ -1155,6 +1155,12 @@ a { color: inherit; text-decoration: none; }
 
 .form__status { margin: 0; color: rgba(255, 255, 255, 0.62); }
 
+.form__note {
+  margin: -12px 0 0;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .js .contact__info,
 .js .form {
   opacity: 0;
@@ -1223,6 +1229,107 @@ a { color: inherit; text-decoration: none; }
 }
 
 
+/* ---------- Legal pages ---------- */
+
+.legal-page {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.legal-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .25 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Long pages scroll under the header, so give it a soft cream backing. */
+.legal-page .site-header {
+  padding-bottom: 32px;
+  background: linear-gradient(var(--cream) 65%, rgba(241, 237, 230, 0));
+}
+
+.legal { padding: 180px var(--pad-x) 140px; }
+
+.legal__title {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.22em;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: max(52px, calc(112 / 1440 * 100vw));
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-transform: none;
+}
+
+.legal__meta {
+  margin: 28px 0 96px;
+  text-align: center;
+  color: rgba(22, 20, 18, 0.55);
+}
+
+/* Long-form reading: sentence case, regular weight, comfortable measure. */
+.legal__body {
+  max-width: 680px;
+  margin: 0 auto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.65;
+  text-transform: none;
+}
+
+.legal__lead {
+  margin: 0 0 24px;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-size: 28px;
+  line-height: 1.25;
+}
+
+.legal__body h2 {
+  margin: 56px 0 14px;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.legal__body p { margin: 0 0 14px; }
+
+.legal__body ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.legal__body li + li { margin-top: 8px; }
+
+.legal__body strong { font-weight: 700; }
+
+.legal__body .link::after { bottom: 0; }
+
+/* Details still to fill in: easy to spot, easy to search for "[". */
+.ph {
+  padding: 0 4px;
+  border-radius: 3px;
+  background: #f2d98b;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.legal__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  max-width: 680px;
+  margin: 88px auto 0;
+}
+
 /* ---------- Mobile ---------- */
 
 @media (max-width: 767px) {
@@ -1290,6 +1397,12 @@ a { color: inherit; text-decoration: none; }
   .field__input { font-size: 22px; }
 
   .footer { min-height: 80svh; }
+
+  .legal { padding: 128px var(--pad-x) 96px; }
+  .legal__meta { margin-bottom: 64px; }
+  .legal__body { font-size: 15px; }
+  .legal__lead { font-size: 24px; }
+  .legal__body h2 { font-size: 28px; margin-top: 44px; }
   .footer__links { grid-template-columns: 1fr 1fr; row-gap: 32px; }
   .footer__links ul:last-child { grid-column: 1 / -1; justify-items: start; }
   .tst__item { text-align: left; }

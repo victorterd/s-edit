@@ -1,11 +1,14 @@
 // Preloader: the logo draws itself while the page and background video load,
 // then slides into the hero logo's exact spot as the curtain lifts.
 (function () {
+  var root = document.documentElement;
+  var pre = document.querySelector(".preloader");
+  // Pages without a preloader (e.g. the legal pages) are ready straight away.
+  if (!pre) return root.classList.add("is-loaded");
+
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   window.scrollTo(0, 0);
 
-  var root = document.documentElement;
-  var pre = document.querySelector(".preloader");
   var logo = pre.querySelector(".preloader__logo");
   var num = pre.querySelector(".preloader__num");
   var target = document.querySelector(".hero__logo img");
@@ -67,6 +70,7 @@
 // retry playback on the first touch or when the tab becomes visible again.
 (function () {
   var video = document.querySelector(".bg__video");
+  if (!video) return;
   var bg = video.parentElement;
 
   video.muted = true;
@@ -116,11 +120,13 @@
 
   function update() {
     var vh = window.innerHeight;
-    var p = Math.min(Math.max(window.scrollY / vh, 0), 1);
-    hero.style.setProperty("--p", p.toFixed(4));
-    // The pinned hero sits behind everything; hide it once it's covered so it
-    // doesn't show through the transparent footer.
-    hero.style.visibility = p >= 1 ? "hidden" : "";
+    if (hero) {
+      var p = Math.min(Math.max(window.scrollY / vh, 0), 1);
+      hero.style.setProperty("--p", p.toFixed(4));
+      // The pinned hero sits behind everything; hide it once it's covered so
+      // it doesn't show through the transparent footer.
+      hero.style.visibility = p >= 1 ? "hidden" : "";
+    }
 
     // Header turns ink while a light section sits under its text.
     var line = header.firstElementChild.getBoundingClientRect();
