@@ -28,6 +28,9 @@
     if (video.readyState >= 3) resolve();
     video.addEventListener("canplay", resolve, { once: true });
     video.addEventListener("error", resolve, { once: true });
+    // With <source> children, a failed load errors on the last source instead.
+    var sources = video.querySelectorAll("source");
+    if (sources.length) sources[sources.length - 1].addEventListener("error", resolve, { once: true });
   });
   Promise.race([
     Promise.all([pageLoaded, videoReady]),

@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=26">
+  <link rel="stylesheet" href="styles.css?v=28">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -48,7 +48,10 @@
   </div>
 
   <div class="bg" aria-hidden="true">
-    <video class="bg__video" poster="assets/poster.jpg" src="assets/background.mp4?v=26#t=0.001" autoplay muted loop playsinline preload="auto" disablepictureinpicture></video>
+    <video class="bg__video" poster="assets/poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
+      <source src="assets/hero-720.mp4?v=28#t=0.001" type="video/mp4" media="(max-width: 767px)">
+      <source src="assets/hero.mp4?v=28#t=0.001" type="video/mp4">
+    </video>
     <div class="bg__shade"></div>
   </div>
 
@@ -375,6 +378,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=26" defer></script>
+  <script src="main.js?v=28" defer></script>
 </body>
 </html>
