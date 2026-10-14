@@ -502,27 +502,6 @@ a { color: inherit; text-decoration: none; }
 
 .reel:nth-child(even) { margin-top: 56px; }
 
-/* Desktop: the rail stays one staggered row but fits the content width,
-   so every reel is in view at once and nothing has to drift. */
-@media (min-width: 768px) {
-  .reels { margin: 0 calc(var(--pad-x) * -1); }
-
-  .reels__track {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    gap: 12px;
-    width: auto;
-    padding: 0 24px 56px;
-    transform: none;
-  }
-
-  .reel { width: auto; }
-  .reel:nth-child(even) { margin-top: 40px; }
-  .reel__time { top: 10px; right: 10px; }
-  .reel__bar { left: 10px; right: 10px; bottom: 10px; }
-}
-
 .reel img,
 .reel video {
   display: block;

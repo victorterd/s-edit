@@ -110,7 +110,7 @@
 })();
 
 // Scroll-linked effects: the hero recedes, the header switches ink/white,
-// and on phones the pinned short-form rail slides sideways.
+// and the short-form rail drifts sideways (pinned on phones).
 (function () {
   var hero = document.querySelector(".hero");
   var header = document.querySelector(".site-header");
@@ -153,8 +153,9 @@
       var max = Math.max(track.scrollWidth - reels.clientWidth, 0);
       var t;
       if (desktop.matches) {
-        // Desktop shows the reels as a grid, so nothing drifts.
-        t = 0;
+        // Drift from the moment the rail enters until its top nears the top
+        // of the screen, so the last reel is fully in view while the rail is.
+        t = (vh - r.top) / (vh * 0.9);
       } else {
         // Pinned: the rail travels its full width while the section is held.
         t = -r.top / Math.max(r.height - vh, 1);
