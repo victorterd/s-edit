@@ -119,7 +119,21 @@
   var footer = document.querySelector(".footer");
   var track = reels && reels.querySelector(".reels__track");
   var desktop = window.matchMedia("(min-width: 768px)");
+  var reducedMotionMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
   var ticking = false;
+  var drift = 0;
+  var driftTarget = 0;
+  var gliding = false;
+
+  // The rail eases toward where the scroll says it should be, so it trails
+  // the scroll with a little inertia instead of moving in lockstep.
+  function glide() {
+    var d = driftTarget - drift;
+    drift = Math.abs(d) < 0.3 || reducedMotionMQ.matches ? driftTarget : drift + d * 0.07;
+    track.style.setProperty("--drift", drift.toFixed(1));
+    if (drift !== driftTarget) requestAnimationFrame(glide);
+    else gliding = false;
+  }
 
   function update() {
     var vh = window.innerHeight;
@@ -155,13 +169,17 @@
       if (desktop.matches) {
         // Drift from the moment the rail enters until its top nears the top
         // of the screen, so the last reel is fully in view while the rail is.
-        t = (vh - r.top) / (vh * 0.9);
+        // Hold at the first reel until the rail is well on screen, then glide
+        // slowly until its top nears the header, ending on the last reel.
+        var from = vh - r.height * 0.85, to = 0;
+        t = (from - r.top) / (from - to);
       } else {
         // Pinned: the rail travels its full width while the section is held.
         t = -r.top / Math.max(r.height - vh, 1);
       }
       t = Math.min(Math.max(t, 0), 1);
-      track.style.setProperty("--drift", (t * max).toFixed(1));
+      driftTarget = t * max;
+      if (!gliding) { gliding = true; requestAnimationFrame(glide); }
     }
     ticking = false;
   }
