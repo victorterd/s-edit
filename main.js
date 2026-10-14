@@ -381,10 +381,11 @@ function whileVisible(el, onEnter, onLeave) {
   render();
 })();
 
-// VFX & SFX clips: play muted while on screen, pause when not, with a
-// sound toggle (sound is the point of the SFX work).
+// Portfolio clips (VFX & SFX tiles, UGC reels): play muted while on screen,
+// pause when not, with a sound toggle; only one clip speaks at a time.
 (function () {
-  document.querySelectorAll(".fx").forEach(function (fig) {
+  var TILES = ".fx, .reel--video";
+  document.querySelectorAll(TILES).forEach(function (fig) {
     var v = fig.querySelector("video");
     var btn = fig.querySelector(".fx__sound");
     if (!v) return;
@@ -397,6 +398,13 @@ function whileVisible(el, onEnter, onLeave) {
     whileVisible(fig, function () { if (!reducedMotion || !v.muted) play(); },
       function () { v.pause(); });
 
+    // Reels show playback progress in their story-style bar.
+    if (fig.classList.contains("reel")) {
+      v.addEventListener("timeupdate", function () {
+        if (v.duration) fig.style.setProperty("--progress", (v.currentTime / v.duration).toFixed(3));
+      });
+    }
+
     if (btn) btn.addEventListener("click", function () {
       v.muted = !v.muted;
       var on = !v.muted;
@@ -404,7 +412,7 @@ function whileVisible(el, onEnter, onLeave) {
       btn.querySelector("span").textContent = on ? "Oprește sunetul" : "Pornește sunetul";
       if (on) {
         // Only one clip speaks at a time.
-        document.querySelectorAll(".fx").forEach(function (other) {
+        document.querySelectorAll(TILES).forEach(function (other) {
           if (other === fig) return;
           var ov = other.querySelector("video"), ob = other.querySelector(".fx__sound");
           if (ov && !ov.muted) {
