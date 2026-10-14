@@ -710,23 +710,29 @@ a { color: inherit; text-decoration: none; }
 
 .js .timeline.is-in { opacity: 1; transform: none; }
 
-/* ----- VFX & SFX: a simple grid of frames, each wiping open on view ----- */
+/* ----- VFX & SFX: vertical clips, centred, each wiping open on view ----- */
 
-.fx-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.fx-show {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
 .fx {
+  position: relative;
   margin: 0;
-  aspect-ratio: 16 / 9;
   border-radius: 10px;
   overflow: hidden;
   background: #1c1b1a;
 }
 
-.fx img {
+.fx--v {
+  width: min(380px, calc((100svh - 200px) * 9 / 16));
+  aspect-ratio: 9 / 16;
+}
+
+.fx video {
   display: block;
   width: 100%;
   height: 100%;
@@ -734,23 +740,15 @@ a { color: inherit; text-decoration: none; }
   transition: transform 1.2s var(--ease-out);
 }
 
-@media (hover: hover) {
-  .fx:hover img { transform: scale(1.05); }
-}
-
 .js .fx {
   clip-path: inset(100% 0 0 0 round 10px);
-  transition: clip-path 1.3s var(--ease) calc(var(--i) % 2 * 0.12s);
+  transition: clip-path 1.3s var(--ease);
 }
 
-.js .fx img { transform: scale(1.2); }
+.js .fx video { transform: scale(1.2); }
 
 .js .fx.is-in { clip-path: inset(0 0 0 0 round 10px); }
-.js .fx.is-in img { transform: scale(1); }
-
-@media (hover: hover) {
-  .js .fx.is-in:hover img { transform: scale(1.05); }
-}
+.js .fx.is-in video { transform: scale(1); }
 
 /* ---------- Marquee ---------- */
 
@@ -1422,7 +1420,7 @@ a { color: inherit; text-decoration: none; }
   .reel__time { top: 10px; right: 10px; }
   .reel__bar { left: 10px; right: 10px; bottom: 10px; }
 
-  .fx-grid { grid-template-columns: 1fr; gap: 12px; }
+  .fx--v { width: min(78vw, 380px); }
 
   .mq { padding: 80px 0 88px; }
 

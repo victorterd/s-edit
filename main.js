@@ -381,6 +381,32 @@ function whileVisible(el, onEnter, onLeave) {
   render();
 })();
 
+// VFX & SFX clips: play muted while on screen, pause when not, with a
+// sound toggle (sound is the point of the SFX work).
+(function () {
+  document.querySelectorAll(".fx").forEach(function (fig) {
+    var v = fig.querySelector("video");
+    var btn = fig.querySelector(".fx__sound");
+    if (!v) return;
+
+    function play() {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+
+    whileVisible(fig, function () { if (!reducedMotion || !v.muted) play(); },
+      function () { v.pause(); });
+
+    if (btn) btn.addEventListener("click", function () {
+      v.muted = !v.muted;
+      var on = !v.muted;
+      btn.setAttribute("aria-pressed", String(on));
+      btn.querySelector("span").textContent = on ? "Oprește sunetul" : "Pornește sunetul";
+      if (on) { v.currentTime = 0; play(); }
+    });
+  });
+})();
+
 // Marquee: two rows drift in opposite directions. Scrolling speeds them up
 // and flips them to follow the scroll direction; hovering slows them down.
 (function () {
