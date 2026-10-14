@@ -249,9 +249,6 @@ function whileVisible(el, onEnter, onLeave) {
 
   var FPS = 24;
   var weights = clips.map(function (c) { return parseFloat(c.style.getPropertyValue("--w")) || 1; });
-  var starts = weights.map(function (_, i) {
-    return weights.slice(0, i).reduce(function (a, b) { return a + b; }, 0);
-  });
 
   var current = 0;
   var progress = 0;
@@ -270,11 +267,19 @@ function whileVisible(el, onEnter, onLeave) {
     return pad(Math.floor(s / 3600)) + ":" + pad(Math.floor(s / 60) % 60) + ":" + pad(s % 60) + ":" + pad(f);
   }
 
+  // Length of a clip in seconds: real duration for video, otherwise each unit
+  // of clip width stands for 18 seconds of footage.
+  function length(i) {
+    var f = frames[i];
+    return f.tagName === "VIDEO" && f.duration ? f.duration : weights[i] * 18;
+  }
+
   function render() {
     var c = clips[current];
     head.style.setProperty("--ph", (c.offsetLeft + progress * c.offsetWidth).toFixed(1) + "px");
-    // Each unit of clip width stands for 18 seconds of footage.
-    tc.textContent = timecode((starts[current] + progress * weights[current]) * 18);
+    var t = progress * length(current);
+    for (var i = 0; i < current; i++) t += length(i);
+    tc.textContent = timecode(t);
   }
 
   function play(v) {

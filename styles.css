@@ -587,6 +587,9 @@ a { color: inherit; text-decoration: none; }
 
 .timeline__viewer > .is-prev { visibility: visible; z-index: 1; }
 
+/* Wider-than-16:9 footage (e.g. 2.4:1) is shown whole, letterboxed. */
+.timeline__viewer > video.is-wide { object-fit: contain; background: #000; }
+
 /* The incoming clip wipes in from the right, like a cut landing. */
 .timeline__viewer > .is-active {
   visibility: visible;

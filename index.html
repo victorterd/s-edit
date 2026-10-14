@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=29">
+  <link rel="stylesheet" href="styles.css?v=31">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -49,8 +49,8 @@
 
   <div class="bg" aria-hidden="true">
     <video class="bg__video" poster="assets/poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
-      <source src="assets/hero-720.mp4?v=29#t=0.001" type="video/mp4" media="(max-width: 767px)">
-      <source src="assets/hero.mp4?v=29#t=0.001" type="video/mp4">
+      <source src="assets/hero-720.mp4?v=31#t=0.001" type="video/mp4" media="(max-width: 767px)">
+      <source src="assets/hero.mp4?v=31#t=0.001" type="video/mp4">
     </video>
     <div class="bg__shade"></div>
   </div>
@@ -191,7 +191,10 @@
               <source src="assets/work/video/medium-1-720.mp4" type="video/mp4" media="(max-width: 767px)">
               <source src="assets/work/video/medium-1.mp4" type="video/mp4">
             </video>
-            <img src="assets/work/medium-2.jpg" width="1280" height="720" decoding="async" alt="Court side">
+            <video class="is-wide" poster="assets/work/video/medium-2.jpg" muted playsinline preload="metadata" disablepictureinpicture aria-label="Proiect 02">
+              <source src="assets/work/video/medium-2-720.mp4" type="video/mp4" media="(max-width: 767px)">
+              <source src="assets/work/video/medium-2.mp4" type="video/mp4">
+            </video>
             <img src="assets/work/medium-3.jpg" width="1280" height="720" decoding="async" alt="Open field">
             <img src="assets/work/medium-4.jpg" width="1280" height="720" decoding="async" alt="Game night">
             <img src="assets/work/medium-5.jpg" width="1280" height="720" decoding="async" alt="Hoops at dusk">
@@ -206,7 +209,7 @@
         </div>
         <div class="timeline__track">
             <button class="clip is-active" type="button" style="--w: 1.35; --img: url(assets/work/video/medium-1.jpg)" aria-label="Proiect 01" aria-pressed="true"></button>
-            <button class="clip" type="button" style="--w: 0.9; --img: url(assets/work/medium-2.jpg)" aria-label="Court side" aria-pressed="false"></button>
+            <button class="clip" type="button" style="--w: 1.6; --img: url(assets/work/video/medium-2.jpg)" aria-label="Proiect 02" aria-pressed="false"></button>
             <button class="clip" type="button" style="--w: 1.5; --img: url(assets/work/medium-3.jpg)" aria-label="Open field" aria-pressed="false"></button>
             <button class="clip" type="button" style="--w: 0.8; --img: url(assets/work/medium-4.jpg)" aria-label="Game night" aria-pressed="false"></button>
             <button class="clip" type="button" style="--w: 1.1; --img: url(assets/work/medium-5.jpg)" aria-label="Hoops at dusk" aria-pressed="false"></button>
@@ -385,6 +388,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=29" defer></script>
+  <script src="main.js?v=31" defer></script>
 </body>
 </html>
