@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=41">
+  <link rel="stylesheet" href="styles.css?v=42">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -49,8 +49,8 @@
 
   <div class="bg" aria-hidden="true">
     <video class="bg__video" poster="assets/poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
-      <source src="assets/hero-720.mp4?v=41#t=0.001" type="video/mp4" media="(max-width: 767px)">
-      <source src="assets/hero.mp4?v=41#t=0.001" type="video/mp4">
+      <source src="assets/hero-720.mp4?v=42#t=0.001" type="video/mp4" media="(max-width: 767px)">
+      <source src="assets/hero.mp4?v=42#t=0.001" type="video/mp4">
     </video>
     <div class="bg__shade"></div>
   </div>
@@ -165,9 +165,15 @@
             <span class="reel__time">0:32</span>
             <span class="reel__bar"></span>
           </figure>
-          <figure class="reel" style="--i: 2">
-            <img src="assets/work/short-3.jpg" width="540" height="960" loading="lazy" decoding="async" alt="">
-            <span class="reel__time">0:34</span>
+          <figure class="reel reel--video" style="--i: 2">
+            <video poster="assets/work/video/ugc-3.jpg" muted loop playsinline preload="metadata" disablepictureinpicture aria-label="UGC, proiect 03">
+              <source src="assets/work/video/ugc-3.mp4" type="video/mp4">
+            </video>
+            <button class="timeline__sound fx__sound" type="button" aria-pressed="false">
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor"/><path class="timeline__waves" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path class="timeline__mute" d="M11 6l4 4M15 6l-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <span>Pornește sunetul</span>
+            </button>
+            <span class="reel__time">0:44</span>
             <span class="reel__bar"></span>
           </figure>
           <figure class="reel" style="--i: 3">
@@ -415,6 +421,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=41" defer></script>
+  <script src="main.js?v=42" defer></script>
 </body>
 </html>
