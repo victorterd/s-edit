@@ -712,11 +712,33 @@ a { color: inherit; text-decoration: none; }
 
 /* ----- VFX & SFX: vertical clips, centred, each wiping open on view ----- */
 
+/* One row on desktop. Column widths follow each clip's aspect ratio
+   (16:9 is 256/81 times wider than 9:16 at the same height), so every
+   tile ends up exactly the same height. The landscape clip sits between
+   the two vertical ones. */
 .fx-show {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 81fr 256fr 81fr;
   gap: 20px;
+  align-items: start;
+}
+
+.fx--v { aspect-ratio: 9 / 16; }
+.fx--h { aspect-ratio: 16 / 9; order: 1; }
+.fx--v ~ .fx--v { order: 2; }
+
+/* Narrow vertical tiles on desktop: the sound button shows just its icon
+   (the label stays for screen readers). */
+@media (min-width: 768px) {
+  .fx--v .fx__sound { right: 12px; bottom: 12px; padding: 11px; }
+  .fx--v .fx__sound span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 .fx {
@@ -725,20 +747,6 @@ a { color: inherit; text-decoration: none; }
   border-radius: 10px;
   overflow: hidden;
   background: #1c1b1a;
-}
-
-.fx-show { --v-w: min(380px, calc((100svh - 200px) * 9 / 16)); }
-
-.fx--v {
-  width: var(--v-w);
-  aspect-ratio: 9 / 16;
-}
-
-/* Landscape clips span the width of a pair of vertical ones. */
-.fx--h {
-  width: calc(2 * var(--v-w) + 20px);
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
 }
 
 .fx video {
@@ -1429,8 +1437,10 @@ a { color: inherit; text-decoration: none; }
   .reel__time { top: 10px; right: 10px; }
   .reel__bar { left: 10px; right: 10px; bottom: 10px; }
 
-  .fx-show { --v-w: min(78vw, 380px); gap: 12px; }
-  .fx--h { width: 100%; }
+  /* Phones: one column, every clip the full content width. */
+  .fx-show { grid-template-columns: 1fr; gap: 12px; }
+  .fx--h,
+  .fx--v ~ .fx--v { order: 0; }
 
   .mq { padding: 80px 0 88px; }
 
