@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet">
   <link rel="preload" href="assets/fonts/InstrumentSerif-Regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="styles.css?v=28">
+  <link rel="stylesheet" href="styles.css?v=29">
   <script>document.documentElement.className = "js";</script>
 </head>
 <body>
@@ -49,8 +49,8 @@
 
   <div class="bg" aria-hidden="true">
     <video class="bg__video" poster="assets/poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture>
-      <source src="assets/hero-720.mp4?v=28#t=0.001" type="video/mp4" media="(max-width: 767px)">
-      <source src="assets/hero.mp4?v=28#t=0.001" type="video/mp4">
+      <source src="assets/hero-720.mp4?v=29#t=0.001" type="video/mp4" media="(max-width: 767px)">
+      <source src="assets/hero.mp4?v=29#t=0.001" type="video/mp4">
     </video>
     <div class="bg__shade"></div>
   </div>
@@ -187,18 +187,25 @@
 
       <div class="timeline" data-reveal>
         <div class="timeline__viewer">
-            <img src="assets/work/medium-1.jpg" width="1280" height="720" decoding="async" alt="Salt flats" class="is-active">
+            <video class="is-active" poster="assets/work/video/medium-1.jpg" muted playsinline preload="metadata" disablepictureinpicture aria-label="Proiect 01">
+              <source src="assets/work/video/medium-1-720.mp4" type="video/mp4" media="(max-width: 767px)">
+              <source src="assets/work/video/medium-1.mp4" type="video/mp4">
+            </video>
             <img src="assets/work/medium-2.jpg" width="1280" height="720" decoding="async" alt="Court side">
             <img src="assets/work/medium-3.jpg" width="1280" height="720" decoding="async" alt="Open field">
             <img src="assets/work/medium-4.jpg" width="1280" height="720" decoding="async" alt="Game night">
             <img src="assets/work/medium-5.jpg" width="1280" height="720" decoding="async" alt="Hoops at dusk">
+          <button class="timeline__sound" type="button" aria-pressed="false" hidden>
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 6h3l4-3v10L5 10H2z" fill="currentColor"/><path class="timeline__waves" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.8a6 6 0 0 1 0 8.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path class="timeline__mute" d="M11 6l4 4M15 6l-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span>Pornește sunetul</span>
+          </button>
         </div>
         <div class="timeline__meta">
-          <span class="timeline__name" aria-live="polite">Salt flats</span>
+          <span class="timeline__name" aria-live="polite">Proiect 01</span>
           <span class="timeline__tc">00:00:00:00</span>
         </div>
         <div class="timeline__track">
-            <button class="clip is-active" type="button" style="--w: 1.3; --img: url(assets/work/medium-1.jpg)" aria-label="Salt flats" aria-pressed="true"></button>
+            <button class="clip is-active" type="button" style="--w: 1.35; --img: url(assets/work/video/medium-1.jpg)" aria-label="Proiect 01" aria-pressed="true"></button>
             <button class="clip" type="button" style="--w: 0.9; --img: url(assets/work/medium-2.jpg)" aria-label="Court side" aria-pressed="false"></button>
             <button class="clip" type="button" style="--w: 1.5; --img: url(assets/work/medium-3.jpg)" aria-label="Open field" aria-pressed="false"></button>
             <button class="clip" type="button" style="--w: 0.8; --img: url(assets/work/medium-4.jpg)" aria-label="Game night" aria-pressed="false"></button>
@@ -378,6 +385,6 @@
     </nav>
   </div>
 
-  <script src="main.js?v=28" defer></script>
+  <script src="main.js?v=29" defer></script>
 </body>
 </html>

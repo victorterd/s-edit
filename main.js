@@ -233,16 +233,19 @@ function whileVisible(el, onEnter, onLeave) {
 }
 
 // Medium-form timeline: the playhead runs through each clip and cuts to the
-// next one; clicking a clip jumps there, at the point you clicked.
+// next one; clicking a clip jumps there, at the point you clicked. Video
+// clips play muted (with a sound toggle) and drive the playhead with their
+// real time; image clips hold for a set time.
 (function () {
   var root = document.querySelector(".timeline");
   if (!root) return;
 
   var clips = [].slice.call(root.querySelectorAll(".clip"));
-  var frames = [].slice.call(root.querySelectorAll(".timeline__viewer img"));
+  var frames = [].slice.call(root.querySelectorAll(".timeline__viewer > img, .timeline__viewer > video"));
   var head = root.querySelector(".timeline__head");
   var name = root.querySelector(".timeline__name");
   var tc = root.querySelector(".timeline__tc");
+  var sound = root.querySelector(".timeline__sound");
 
   var FPS = 24;
   var weights = clips.map(function (c) { return parseFloat(c.style.getPropertyValue("--w")) || 1; });
@@ -254,7 +257,10 @@ function whileVisible(el, onEnter, onLeave) {
   var progress = 0;
   var visible = false;
   var hovering = false;
+  var soundOn = false;
   var last = 0;
+
+  function isVideo(i) { return frames[i].tagName === "VIDEO"; }
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
@@ -271,8 +277,22 @@ function whileVisible(el, onEnter, onLeave) {
     tc.textContent = timecode((starts[current] + progress * weights[current]) * 18);
   }
 
+  function play(v) {
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+
+  function startVideo(v, at) {
+    v.muted = !soundOn;
+    var seek = function () { if (v.duration) v.currentTime = at * v.duration; };
+    if (v.readyState >= 1) seek(); else v.addEventListener("loadedmetadata", seek, { once: true });
+    if (visible && !reducedMotion) play(v);
+  }
+
   function select(i, at) {
+    at = at || 0;
     if (i !== current) {
+      if (isVideo(current)) frames[current].pause();
       frames.forEach(function (f) { f.classList.remove("is-prev"); });
       frames[current].classList.remove("is-active");
       frames[current].classList.add("is-prev");
@@ -287,28 +307,54 @@ function whileVisible(el, onEnter, onLeave) {
       name.textContent = clips[i].getAttribute("aria-label");
       current = i;
     }
-    progress = at || 0;
+    sound.hidden = !isVideo(i);
+    if (isVideo(i)) startVideo(frames[i], at);
+    progress = at;
     render();
   }
+
+  function next() { select((current + 1) % clips.length); }
 
   function tick(now) {
     if (!visible) return;
     var dt = last ? now - last : 0;
     last = now;
-    if (!hovering && !reducedMotion) {
+    if (isVideo(current)) {
+      var v = frames[current];
+      if (v.duration) {
+        progress = Math.min(v.currentTime / v.duration, 1);
+        render();
+      }
+    } else if (!hovering && !reducedMotion) {
       progress += dt / (weights[current] * 3200);
-      if (progress >= 1) select((current + 1) % clips.length);
+      if (progress >= 1) next();
       else render();
     }
     requestAnimationFrame(tick);
   }
+
+  frames.forEach(function (f, i) {
+    if (f.tagName === "VIDEO") {
+      f.addEventListener("ended", function () { if (i === current) next(); });
+    }
+  });
 
   clips.forEach(function (clip, i) {
     clip.addEventListener("click", function (e) {
       var r = clip.getBoundingClientRect();
       var at = e.clientX ? Math.min(Math.max((e.clientX - r.left) / r.width, 0), 0.98) : 0;
       select(i, at);
+      // A click is a deliberate choice, so play the video even if motion is reduced.
+      if (isVideo(i)) play(frames[i]);
     });
+  });
+
+  sound.addEventListener("click", function () {
+    soundOn = !soundOn;
+    sound.setAttribute("aria-pressed", String(soundOn));
+    sound.querySelector("span").textContent = soundOn ? "Oprește sunetul" : "Pornește sunetul";
+    frames.forEach(function (f) { if (f.tagName === "VIDEO") f.muted = !soundOn; });
+    if (isVideo(current)) play(frames[current]);
   });
 
   root.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hovering = true; });
@@ -319,9 +365,14 @@ function whileVisible(el, onEnter, onLeave) {
     if (visible) return;
     visible = true;
     last = 0;
+    if (isVideo(current) && !reducedMotion) play(frames[current]);
     requestAnimationFrame(tick);
-  }, function () { visible = false; });
+  }, function () {
+    visible = false;
+    if (isVideo(current)) frames[current].pause();
+  });
 
+  sound.hidden = !isVideo(current);
   render();
 })();
 

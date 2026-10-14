@@ -575,7 +575,8 @@ a { color: inherit; text-decoration: none; }
   background: #1c1b1a;
 }
 
-.timeline__viewer img {
+.timeline__viewer > img,
+.timeline__viewer > video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -584,14 +585,50 @@ a { color: inherit; text-decoration: none; }
   visibility: hidden;
 }
 
-.timeline__viewer img.is-prev { visibility: visible; z-index: 1; }
+.timeline__viewer > .is-prev { visibility: visible; z-index: 1; }
 
 /* The incoming clip wipes in from the right, like a cut landing. */
-.timeline__viewer img.is-active {
+.timeline__viewer > .is-active {
   visibility: visible;
   z-index: 2;
   animation: clip-in 0.9s var(--ease) both;
 }
+
+/* Sound toggle for video clips: they play muted until asked. */
+.timeline__sound {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  background: rgba(12, 12, 12, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--fg);
+  font: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.timeline__sound[hidden] { display: none; }
+
+.timeline__sound:hover,
+.timeline__sound:focus-visible {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--ink);
+  outline: none;
+}
+
+.timeline__sound .timeline__waves { display: none; }
+.timeline__sound[aria-pressed="true"] .timeline__waves { display: inline; }
+.timeline__sound[aria-pressed="true"] .timeline__mute { display: none; }
 
 @keyframes clip-in {
   from { clip-path: inset(0 0 0 100%); transform: scale(1.04); }
