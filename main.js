@@ -402,7 +402,20 @@ function whileVisible(el, onEnter, onLeave) {
       var on = !v.muted;
       btn.setAttribute("aria-pressed", String(on));
       btn.querySelector("span").textContent = on ? "Oprește sunetul" : "Pornește sunetul";
-      if (on) { v.currentTime = 0; play(); }
+      if (on) {
+        // Only one clip speaks at a time.
+        document.querySelectorAll(".fx").forEach(function (other) {
+          if (other === fig) return;
+          var ov = other.querySelector("video"), ob = other.querySelector(".fx__sound");
+          if (ov && !ov.muted) {
+            ov.muted = true;
+            ob.setAttribute("aria-pressed", "false");
+            ob.querySelector("span").textContent = "Pornește sunetul";
+          }
+        });
+        v.currentTime = 0;
+        play();
+      }
     });
   });
 })();
