@@ -502,6 +502,23 @@ a { color: inherit; text-decoration: none; }
 
 .reel:nth-child(even) { margin-top: 56px; }
 
+/* Desktop: two rows of four instead of a sideways rail; alternate
+   columns sit lower so the grid keeps the rail's staggered rhythm. */
+@media (min-width: 768px) {
+  .reels { margin: 0; }
+
+  .reels__track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: auto;
+    padding: 0 0 56px;
+    transform: none;
+  }
+
+  .reel { width: auto; }
+}
+
 .reel img,
 .reel video {
   display: block;
